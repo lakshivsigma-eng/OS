@@ -4,71 +4,152 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Lakshiv OS 1</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#ffffff">
 <style>
-  :root { --bg:#fff; --fg:#000; --desk:#6b8cae; }
-  * { box-sizing:border-box; margin:0; padding:0; }
-  html,body { height:100%; overflow:hidden; font-family:"Chicago","Geneva","Courier New",monospace; font-size:13px; color:var(--fg); user-select:none; }
-  body { background:var(--desk); background-image:radial-gradient(#00000022 1px, transparent 1px); background-size:4px 4px; }
+  :root{--accent:#0078d4;--tb:40px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;font-size:13px;color:#1a1a1a;user-select:none;background:#0b1b3a}
+  #wall{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+  #desktop{position:fixed;inset:0 0 var(--tb) 0;z-index:1}
+  #windows{position:fixed;inset:0 0 var(--tb) 0;z-index:2;pointer-events:none}
 
-  /* boot */
-  #boot { position:fixed; inset:0; background:#000; color:#fff; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; cursor:pointer; }
-  #boot h1 { font-size:28px; letter-spacing:2px; }
-  #boot p { opacity:.7; animation:blink 1.2s steps(2) infinite; }
-  @keyframes blink { 50% { opacity:0; } }
-
-  /* menu bar */
-  #menubar { position:fixed; top:0; left:0; right:0; height:24px; background:#fff; border-bottom:2px solid #000; display:flex; align-items:center; padding:0 8px; gap:4px; z-index:5000; }
-  .menu { position:relative; padding:2px 10px; cursor:default; }
-  .menu:hover, .menu.open { background:#000; color:#fff; }
-  .menu .drop { display:none; position:absolute; top:100%; left:0; background:#fff; color:#000; border:2px solid #000; box-shadow:3px 3px 0 #000; min-width:170px; z-index:6000; }
-  .menu.open .drop { display:block; }
-  .drop div { padding:4px 14px; white-space:nowrap; }
-  .drop div:hover { background:#000; color:#fff; }
-  .drop hr { border:0; border-top:1px solid #000; margin:2px 0; }
-  #clock { margin-left:auto; padding-right:6px; }
-  #apple { font-weight:bold; }
+  /* lock screen */
+  #boot{position:fixed;inset:0;z-index:9999;background:rgba(5,10,25,.35);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12vh 0 9vh;cursor:pointer;transition:opacity .4s,transform .5s}
+  #boot.hide{opacity:0;pointer-events:none;transform:translateY(-24px)}
+  .lk-time{font-size:min(15vw,112px);font-weight:200;line-height:1;text-align:center}
+  .lk-date{font-size:22px;margin-top:8px;opacity:.92;text-align:center}
+  .lk-user{text-align:center}
+  .lk-av{width:96px;height:96px;border-radius:50%;background:#ffffff26;display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 10px}
+  .lk-user small{display:block;margin-top:16px;opacity:.75}
 
   /* desktop icons */
-  #desktop { position:absolute; inset:24px 0 0 0; }
-  .icon { position:absolute; width:84px; text-align:center; cursor:default; padding:4px; }
-  .icon .glyph { font-size:34px; line-height:40px; filter:grayscale(1) contrast(1.4); }
-  .icon span { display:inline-block; background:#fff; padding:0 4px; margin-top:3px; font-size:12px; }
-  .icon.sel .glyph { filter:invert(1); background:#000; }
-  .icon.sel span { background:#000; color:#fff; }
+  .icon{position:absolute;width:88px;padding:4px 2px 2px;text-align:center;cursor:default;border:1px solid transparent;border-radius:3px;color:#fff;text-shadow:0 1px 3px #000,0 0 2px #000}
+  .icon .glyph{font-size:34px;line-height:42px}
+  .icon .lbl{display:block;font-size:12px;line-height:1.25;word-break:break-word;max-height:3.75em;overflow:hidden;margin-top:2px}
+  .icon:hover{background:#ffffff1f}
+  .icon.sel{background:#ffffff33;border-color:#ffffff66}
+  .icon.drag{opacity:.8;z-index:50}
 
   /* windows */
-  .win { position:absolute; background:#fff; border:2px solid #000; box-shadow:4px 4px 0 #000; display:flex; flex-direction:column; min-width:200px; min-height:120px; }
-  .win.active { z-index:3000; }
-  .titlebar { height:22px; border-bottom:2px solid #000; display:flex; align-items:center; padding:0 6px; cursor:grab; background:
-      repeating-linear-gradient(#000 0 1px, #fff 1px 3px); background-size:100% 100%; position:relative; }
-  .win:not(.active) .titlebar { background:#fff; }
-  .titlebar .close { width:14px; height:14px; border:2px solid #000; background:#fff; cursor:pointer; flex:none; z-index:1; }
-  .titlebar .title { position:absolute; left:50%; transform:translateX(-50%); background:#fff; padding:0 10px; white-space:nowrap; }
-  .content { flex:1; overflow:auto; position:relative; user-select:text; }
-  .resize { position:absolute; right:0; bottom:0; width:14px; height:14px; cursor:nwse-resize; background:linear-gradient(135deg,transparent 50%,#000 50%); }
-  .pad { padding:12px; line-height:1.5; }
+  .win{position:absolute;display:flex;flex-direction:column;background:#fff;border-radius:8px;box-shadow:0 8px 30px #0008,0 0 0 1px #0005;overflow:hidden;min-width:240px;min-height:160px;pointer-events:auto}
+  .win.active{box-shadow:0 14px 44px #000b,0 0 0 1px #ffffff40}
+  .win.max{border-radius:0}
+  .win.min{display:none}
+  .titlebar{height:34px;flex:none;display:flex;align-items:center;background:rgba(36,36,42,.98);color:#fff;cursor:default;position:relative}
+  .win:not(.active) .titlebar{background:rgba(58,58,64,.98);color:#c3c3c8}
+  .wicon{padding:0 8px 0 11px;font-size:15px}
+  .titlebar .title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12.5px}
+  .wbtns{display:flex;height:100%}
+  .wb{width:46px;border:0;background:transparent;color:inherit;font:14px "Segoe UI",system-ui,sans-serif;cursor:default}
+  .wb:hover{background:#ffffff22}
+  .wb.close:hover{background:#e81123;color:#fff}
+  .content{flex:1;overflow:auto;position:relative;user-select:text;min-height:0}
+  .rz{position:absolute;z-index:6}
+  .win.max .rz{display:none}
+  .rz[data-d=n]{top:0;left:10px;right:10px;height:5px;cursor:ns-resize}
+  .rz[data-d=s]{bottom:0;left:10px;right:10px;height:5px;cursor:ns-resize}
+  .rz[data-d=e]{right:0;top:10px;bottom:10px;width:5px;cursor:ew-resize}
+  .rz[data-d=w]{left:0;top:10px;bottom:10px;width:5px;cursor:ew-resize}
+  .rz[data-d=ne]{top:0;right:0;width:12px;height:12px;cursor:nesw-resize}
+  .rz[data-d=nw]{top:0;left:0;width:12px;height:12px;cursor:nwse-resize}
+  .rz[data-d=se]{bottom:0;right:0;width:14px;height:14px;cursor:nwse-resize}
+  .rz[data-d=sw]{bottom:0;left:0;width:12px;height:12px;cursor:nesw-resize}
+  .pad{padding:14px;line-height:1.55}
 
-  /* apps */
-  textarea.notes { width:100%; height:100%; border:0; outline:0; resize:none; padding:10px; font:inherit; background:#fffff0; }
-  .calc { padding:8px; width:220px; }
-  .calc .disp { border:2px solid #000; text-align:right; padding:6px; font-size:20px; margin-bottom:6px; background:#e8f0e0; min-height:34px; }
-  .calc .keys { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
-  .calc button, .btn { font:inherit; border:2px solid #000; background:#fff; padding:8px 0; cursor:pointer; box-shadow:2px 2px 0 #000; }
-  .calc button:active, .btn:active { background:#000; color:#fff; box-shadow:none; }
-  .term { background:#000; color:#7CFC00; height:100%; padding:8px; overflow:auto; font-family:"Courier New",monospace; user-select:text; }
-  .term .line { white-space:pre-wrap; }
-  .term input { background:transparent; border:0; outline:0; color:#7CFC00; font:inherit; width:80%; }
-  canvas.paint { background:#fff; display:block; cursor:crosshair; }
-  .toolbar { border-bottom:2px solid #000; padding:4px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
-  .sw { width:18px; height:18px; border:2px solid #000; cursor:pointer; }
-  .file { display:flex; gap:8px; align-items:center; padding:4px 8px; cursor:default; }
-  .file:hover { background:#000; color:#fff; }
-  .mine { display:grid; grid-template-columns:repeat(8,24px); gap:1px; background:#999; padding:1px; width:max-content; margin:8px auto; }
-  .mine .c { width:24px; height:24px; background:#ddd; border:2px outset #fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; cursor:pointer; }
-  .mine .c.open { background:#eee; border:1px solid #aaa; }
-  .alert { position:fixed; inset:0; background:#0006; display:flex; align-items:center; justify-content:center; z-index:8000; }
-  .alert .box { background:#fff; border:3px double #000; padding:18px; max-width:320px; box-shadow:5px 5px 0 #000; }
-  .alert .btn { padding:4px 18px; margin-top:12px; float:right; }
+  /* taskbar */
+  #taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--tb);background:rgba(16,16,20,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:5000;display:flex;color:#fff}
+  .tstart{width:48px;flex:none;display:flex;align-items:center;justify-content:center;cursor:default}
+  .tstart:hover,.tstart.on{background:#ffffff1f}
+  .winlogo{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:16px;height:16px}
+  .winlogo i{background:#4cc2ff;display:block}
+  .tsearch{width:240px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px;background:#fff;color:#555;cursor:text;font-size:13px}
+  #tbwins{display:flex;flex:1;min-width:0;overflow:hidden;margin-left:4px}
+  .tbtn{width:46px;flex:none;display:flex;align-items:center;justify-content:center;position:relative;font-size:20px;cursor:default}
+  .tbtn:hover{background:#ffffff1f}
+  .tbtn.open::after{content:"";position:absolute;bottom:0;left:12px;right:12px;height:3px;background:#8a8a90}
+  .tbtn.active{background:#ffffff2e}
+  .tbtn.active::after{background:var(--accent);left:6px;right:6px}
+  .tbtn.mini{opacity:.7}
+  #tray{display:flex;align-items:center;flex:none}
+  .tray-i{padding:0 7px;font-size:13px;opacity:.9}
+  #clock{padding:0 10px;text-align:center;line-height:1.25;font-size:12px;cursor:default;height:100%;display:flex;flex-direction:column;justify-content:center}
+  #clock:hover{background:#ffffff1f}
+  #showdesk{width:9px;height:100%;border-left:1px solid #ffffff40;cursor:default}
+  #showdesk:hover{background:#ffffff33}
+
+  /* start menu + calendar */
+  #startmenu{position:fixed;left:0;bottom:var(--tb);width:min(560px,100vw);height:min(620px,calc(100vh - var(--tb)));background:rgba(28,28,34,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:#fff;z-index:5500;display:none;border:1px solid #484850;border-bottom:0}
+  #startmenu.show{display:flex}
+  .sm-rail{width:48px;flex:none;display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:4px}
+  .sm-rail button{height:46px;border:0;background:transparent;color:#fff;font-size:18px;cursor:default}
+  .sm-rail button:hover{background:#ffffff1f}
+  .sm-main{flex:1;min-width:0;display:flex;flex-direction:column;padding:14px 14px 0 4px}
+  .sm-search{height:38px;border:1px solid #666;background:#ffffff14;color:#fff;border-radius:4px;padding:0 12px;font:inherit;font-size:14px;outline:0;margin-bottom:10px}
+  .sm-search:focus{border-color:var(--accent);background:#ffffff1f}
+  .sm-search::placeholder{color:#aaa}
+  .sm-body{flex:1;overflow:auto;padding-bottom:12px}
+  .sm-body h5{font-size:12px;font-weight:600;opacity:.75;margin:6px 4px 8px}
+  .sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+  .sm-app{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:5px;text-align:center;font-size:12px;cursor:default}
+  .sm-app:hover{background:#ffffff1c}
+  .sm-app span{font-size:30px;line-height:34px}
+  .sm-row{display:flex;gap:10px;align-items:center;padding:7px 8px;border-radius:5px;cursor:default}
+  .sm-row:hover{background:#ffffff1c}
+  .sm-row small{margin-left:auto;opacity:.6}
+  #cal{position:fixed;right:0;bottom:var(--tb);width:300px;background:rgba(28,28,34,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);color:#fff;border:1px solid #484850;z-index:5500;display:none;padding:14px}
+  #cal.show{display:block}
+  .cal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .cal-h button{background:transparent;border:0;color:#fff;font-size:13px;width:32px;height:28px;cursor:pointer}
+  .cal-h button:hover{background:#ffffff1f}
+  .cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+  .cal-g div{padding:7px 0;border-radius:50%}
+  .cal-g .dow{opacity:.6;font-size:11px}
+  .cal-g .dim{opacity:.35}
+  .cal-g .today{background:var(--accent);color:#fff}
+  @media (max-width:820px){.tsearch{width:48px;padding:0;justify-content:center}.tsearch .tst{display:none}}
+
+  /* shared app bits */
+  textarea.notes{width:100%;height:100%;border:0;outline:0;resize:none;padding:12px;font:13px/1.5 "Cascadia Mono",Consolas,monospace;background:#fff;color:#1a1a1a}
+  .calc{padding:10px;width:240px}
+  .calc .disp{border:1px solid #c8ccd2;border-radius:6px;text-align:right;padding:8px 10px;font-size:22px;margin-bottom:8px;background:#f7f9fc;min-height:42px;overflow:hidden}
+  .calc .keys{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+  .calc button,.btn{font:inherit;border:1px solid #c8ccd2;background:#f3f4f6;color:#1a1a1a;border-radius:6px;padding:6px 16px;cursor:pointer}
+  .calc button{padding:11px 0;font-size:15px}
+  .calc button:hover,.btn:hover{background:#e6e9ee}
+  .calc button:active,.btn:active{background:#d6dae1}
+  .term{background:#0c0c0c;color:#cccccc;height:100%;padding:8px 10px;overflow:auto;font-family:"Cascadia Mono",Consolas,"Courier New",monospace;font-size:13px;user-select:text}
+  .term .line{white-space:pre-wrap}
+  .term input{background:transparent;border:0;outline:0;color:#cccccc;font:inherit;width:80%}
+  canvas.paint{background:#fff;display:block;cursor:crosshair}
+  .toolbar{border-bottom:1px solid #e3e7ec;background:#f7f9fc;padding:5px 8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .sw{width:20px;height:20px;border:1px solid #888;border-radius:4px;cursor:pointer}
+  .file{display:flex;gap:8px;align-items:center;padding:5px 8px;cursor:default;border-radius:5px}
+  .file:hover{background:#e5f1fb}
+  .alert{position:fixed;inset:0;background:#0006;display:flex;align-items:center;justify-content:center;z-index:8000}
+  .alert .box{background:#fff;border-radius:10px;padding:18px 20px;max-width:380px;min-width:260px;box-shadow:0 10px 40px #0007;line-height:1.5;color:#1a1a1a}
+  .alert .btn{float:right;margin-top:14px;padding:5px 18px}
+  .alert input{border:1px solid #9aa4b2 !important;border-radius:6px;padding:6px 8px !important;outline:0}
+  .alert input:focus{border-color:var(--accent) !important}
+
+  /* settings */
+  .st{display:flex;height:100%;background:#f3f3f3;color:#1a1a1a}
+  .st-nav{width:180px;flex:none;padding:10px 8px;background:#e9e9ec}
+  .st-nav div{padding:9px 12px;border-radius:5px;cursor:default}
+  .st-nav div:hover{background:#dcdce0}
+  .st-nav .cur{background:#fff}
+  .st-body{flex:1;padding:18px 24px;overflow:auto}
+  .st h3{font-size:22px;font-weight:600;margin-bottom:12px}
+  .st h4{margin:18px 0 8px;font-size:14px}
+  .st .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0}
+  .wp-grid{display:grid;grid-template-columns:repeat(auto-fill,124px);gap:10px}
+  .wp{height:74px;border-radius:6px;border:2px solid transparent;cursor:pointer;position:relative;overflow:hidden}
+  .wp.cur{border-color:var(--accent)}
+  .wp span{position:absolute;left:7px;bottom:5px;font-size:11px;color:#fff;text-shadow:0 1px 2px #000}
+  .acc-row{display:flex;gap:8px}
+  .acc{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;box-shadow:0 0 0 1px #0003}
+  .acc.cur{border-color:#000}
 
   /* ---- file explorer ---- */
   .xp{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;color:#1a1a1a;font:13px "Segoe UI",system-ui,-apple-system,sans-serif;user-select:none;outline:0}
@@ -181,99 +262,139 @@
   .dh-row:hover{background:#eef5fc}
   .dh-row .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .dh-row .dt{color:#666}
+
+  .bu{border:1px solid #c8ccd2 !important;border-radius:6px !important;padding:5px 9px !important;outline:0;background:#fff}
+  .bu:focus{border-color:var(--accent) !important}
+  /* dark popups to match the shell */
+  .pop{background:rgba(40,40,46,.97);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid #58585f;color:#f2f2f2;border-radius:8px;box-shadow:0 8px 30px #000a;z-index:7000}
+  .pop div:hover:not(.dis){background:#ffffff24}
+  .pop hr{border-top-color:#ffffff30}
 </style>
 </head>
 <body>
 
-<div id="boot">
-  <h1>LAKSHIV OS 1</h1>
-  <div>A tiny operating system that lives in your browser.</div>
-  <p>Click to enter.</p>
-</div>
+<canvas id="wall"></canvas>
 
-<div id="menubar">
-  <div class="menu" id="apple">◆
-    <div class="drop">
-      <div data-act="about">About Lakshiv OS…</div><hr>
-      <div data-open="readme">Read Me</div>
-      <div data-open="docs">Docs</div>
-      <div data-open="notes">Notes</div>
-      <div data-open="calc">Calculator</div>
-      <div data-open="terminal">Terminal</div>
-      <div data-open="browser">Browser</div>
-      <div data-open="store">App Store</div>
-    </div>
-  </div>
-  <div class="menu">File
-    <div class="drop">
-      <div data-act="newfile">New File…</div>
-      <div data-open="files">Open Files</div>
-      <div data-act="closeAll">Close All Windows</div>
-      <hr><div data-act="restart">Restart</div>
-    </div>
-  </div>
-  <div class="menu">Edit
-    <div class="drop"><div data-act="nop">Undo</div><div data-act="nop">Copy</div><div data-act="nop">Paste</div></div>
-  </div>
-  <div class="menu">View
-    <div class="drop">
-      <div data-act="tidy">Clean Up Desktop</div><hr>
-      <div data-act="bg:#6b8cae">Blue Desktop</div>
-      <div data-act="bg:#3b7a57">Green Desktop</div>
-      <div data-act="bg:#a0522d">Brown Desktop</div>
-      <div data-act="bg:#555">Gray Desktop</div>
-    </div>
-  </div>
-  <div class="menu">Special
-    <div class="drop">
-      <div data-open="paint">Paint</div>
-      <div data-act="empty">Empty Recycle Bin</div>
-    </div>
-  </div>
-  <div class="menu">Help
-    <div class="drop"><div data-open="readme">How to use</div></div>
-  </div>
-  <div id="clock">--:--</div>
+<div id="boot">
+  <div><div class="lk-time"></div><div class="lk-date"></div></div>
+  <div class="lk-user"><div class="lk-av">👤</div><div>Lakshiv</div><small>Click anywhere to sign in</small></div>
 </div>
 
 <div id="desktop"></div>
+<div id="windows"></div>
+
+<div id="startmenu">
+  <div class="sm-rail">
+    <button id="sm-docs" title="Documents">📄</button>
+    <button id="sm-pics" title="Pictures">🖼️</button>
+    <button id="sm-set" title="Settings">⚙️</button>
+    <button id="sm-power" title="Power">⏻</button>
+  </div>
+  <div class="sm-main"><input class="sm-search" placeholder="Type here to search" spellcheck="false" autocomplete="off"><div class="sm-body"></div></div>
+</div>
+<div id="cal"></div>
+
+<div id="taskbar">
+  <div id="tstart" class="tstart" title="Start"><div class="winlogo"><i></i><i></i><i></i><i></i></div></div>
+  <div id="tsearch" class="tsearch"><span>🔍</span><span class="tst">Type here to search</span></div>
+  <div id="tbwins"></div>
+  <div id="tray">
+    <span class="tray-i" title="Network">📶</span><span class="tray-i" title="Volume">🔊</span>
+    <div id="clock"><div class="ct"></div><div class="cd"></div></div>
+    <div id="showdesk" title="Show desktop"></div>
+  </div>
+</div>
 
 <script>
+/* pristine copy of this page, used by "Download Lakshiv OS" */
+const ORIGINAL_HTML = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 const desktop = document.getElementById('desktop');
 let z = 10;
 
-/* ---------- boot / clock / menus ---------- */
-document.getElementById('boot').onclick = e => { e.currentTarget.remove(); open('readme'); };
-const clock = () => { document.getElementById('clock').textContent = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); };
-clock(); setInterval(clock, 10000);
+/* ---------- helpers ---------- */
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : v; } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+const $id = id => document.getElementById(id);
+const wins = $id('windows');
+const TB_H = 40;
+const deskW = () => window.innerWidth, deskH = () => window.innerHeight - TB_H;
 
-document.querySelectorAll('.menu').forEach(m => {
-  m.addEventListener('mousedown', e => {
-    if (e.target.closest('.drop') ) return;
-    const was = m.classList.contains('open');
-    closeMenus(); if (!was) m.classList.add('open');
-    e.stopPropagation();
+/* ---------- wallpaper ---------- */
+const WALLS = {
+  waves:  {name:'Waves',  bg:['#050d24','#0f3460'], layers:['#1e5fa8','#2a82c7','#4aa3df']},
+  sunset: {name:'Sunset', bg:['#2b0f3a','#8a2d5b'], layers:['#d9483b','#f0a04b','#ffd27a']},
+  forest: {name:'Forest', bg:['#06201a','#0e4a3a'], layers:['#1f7a5c','#2fa37a','#6fd3a5']},
+  candy:  {name:'Candy',  bg:['#2a1450','#7a2f9e'], layers:['#d94fa0','#f27ac0','#ffb3de']},
+  slate:  {name:'Slate',  bg:['#101114','#2a2d33'], layers:['#3a3e46','#4b505a','#6a707c']}
+};
+const wallCv = $id('wall'); let wallCtx = null;
+try { wallCtx = wallCv.getContext('2d'); } catch(e){}
+let wallId = store.get('los-wall', 'waves'), wallAnim = store.get('los-anim', '1') === '1';
+if (!WALLS[wallId]) wallId = 'waves';
+function drawWall(t){
+  if (!wallCtx) return;
+  const W = wallCv.width, H = wallCv.height, cfg = WALLS[wallId] || WALLS.waves;
+  const g = wallCtx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, cfg.bg[0]); g.addColorStop(1, cfg.bg[1]);
+  wallCtx.globalAlpha = 1; wallCtx.fillStyle = g; wallCtx.fillRect(0, 0, W, H);
+  cfg.layers.forEach((col, i) => {
+    wallCtx.beginPath(); wallCtx.moveTo(0, H);
+    const amp = H * (0.045 + 0.02 * i), base = H * (0.52 + 0.13 * i), k = (1.1 + i * 0.6) * Math.PI * 2 / W, sp = t / 1000 * (0.5 + i * 0.25) * (i % 2 ? -1 : 1);
+    for (let x = 0; x <= W + 8; x += 8) wallCtx.lineTo(x, base + Math.sin(x * k + sp) * amp + Math.sin(x * k * 2.3 + sp * 1.7) * amp * 0.4);
+    wallCtx.lineTo(W, H); wallCtx.closePath(); wallCtx.globalAlpha = 0.55; wallCtx.fillStyle = col; wallCtx.fill();
   });
-});
-function closeMenus(){ document.querySelectorAll('.menu.open').forEach(m=>m.classList.remove('open')); }
-document.addEventListener('mousedown', e => { if (!e.target.closest('.menu')) closeMenus(); });
-document.querySelectorAll('.drop div').forEach(d => d.addEventListener('click', () => {
-  closeMenus();
-  if (d.dataset.open) open(d.dataset.open);
-  if (d.dataset.act) act(d.dataset.act);
-}));
+  wallCtx.globalAlpha = 1;
+}
+function sizeWall(){ wallCv.width = window.innerWidth; wallCv.height = window.innerHeight; drawWall(performance.now()); }
+let wallRaf = 0, lastT = 0;
+function wallTick(t){ wallRaf = requestAnimationFrame(wallTick); if (t - lastT < 33) return; lastT = t; drawWall(t); }
+function startWall(){
+  if (wallRaf) cancelAnimationFrame(wallRaf); wallRaf = 0;
+  if (wallAnim && wallCtx && typeof requestAnimationFrame === 'function') wallRaf = requestAnimationFrame(wallTick); else drawWall(0);
+}
+function setWall(id){ if (!WALLS[id]) return; wallId = id; store.set('los-wall', id); drawWall(performance.now()); }
+function setAnim(on){ wallAnim = !!on; store.set('los-anim', on ? '1' : '0'); startWall(); }
+function setAccent(c, save){ document.documentElement.style.setProperty('--accent', c); if (save) store.set('los-accent', c); }
+setAccent(store.get('los-accent', '#0078d4'));
 
+/* ---------- clock + lock screen ---------- */
+function tickClock(){
+  const n = new Date();
+  const t = n.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  $id('clock').querySelector('.ct').textContent = t;
+  $id('clock').querySelector('.cd').textContent = n.toLocaleDateString('en-US', {month:'numeric', day:'numeric', year:'numeric'});
+  document.querySelector('.lk-time').textContent = t;
+  document.querySelector('.lk-date').textContent = n.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+}
+tickClock(); setInterval(tickClock, 10000);
+const boot = $id('boot');
+function signIn(){
+  boot.classList.add('hide');
+  setTimeout(() => { if (boot.classList.contains('hide')) boot.style.display = 'none'; }, 450);
+  if (!store.get('los-welcomed', '')) { store.set('los-welcomed', '1'); open('readme'); }
+}
+function showLock(){ boot.style.display = ''; void boot.offsetWidth; boot.classList.remove('hide'); tickClock(); }
+boot.onclick = signIn;
+
+/* ---------- actions ---------- */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => {});
 function act(a){
-  if (a === 'about') return alertBox('Lakshiv OS 1\n\nA test operating system built with HTML, CSS and JavaScript.');
+  if (a === 'about') return alertBox('Lakshiv OS 1\n\nA desktop environment in your browser, built with HTML, CSS and JavaScript.');
   if (a === 'newfile') return newFile();
-  if (a === 'closeAll') document.querySelectorAll('.win').forEach(w=>w.remove());
+  if (a === 'dlos') return downloadText('lakshiv-os.html', 'text/html', ORIGINAL_HTML);
+  if (a === 'install') {
+    if (installEvt) { const e = installEvt; installEvt = null; return e.prompt(); }
+    return alertBox('Ways to use Lakshiv OS as an app:\n\n1. Download Lakshiv OS (Start ▸ Power) and keep the file on your computer.\n\n2. Windows: use "Launch Lakshiv OS.bat" from the app package to open it in its own window.\n\n3. Host the app package on GitHub Pages, open that link in Chrome or Edge, and click the Install icon in the address bar.');
+  }
+  if (a === 'closeAll') allWins().forEach(w => w.remove());
   if (a === 'restart') location.reload();
-  if (a === 'tidy') layoutIcons();
   if (a === 'empty') return emptyTrash();
-  if (a.startsWith('bg:')) document.body.style.setProperty('--desk', a.slice(3));
 }
 function alertBox(msg){
-  const el = document.createElement('div'); el.className='alert';
+  const el = document.createElement('div'); el.className = 'alert';
   el.innerHTML = '<div class="box"><div style="white-space:pre-wrap"></div><button class="btn">OK</button></div>';
   el.querySelector('.box > div').textContent = msg;
   el.querySelector('button').onclick = () => el.remove();
@@ -281,36 +402,260 @@ function alertBox(msg){
 }
 
 /* ---------- window manager ---------- */
-function focusWin(w){ document.querySelectorAll('.win').forEach(x=>x.classList.remove('active')); w.classList.add('active'); w.style.zIndex = ++z; }
+function allWins(){ return [...wins.querySelectorAll('.win')]; }
+function winIcon(id){
+  if (typeof apps !== 'undefined' && apps[id]) return apps[id].icon;
+  if (id.startsWith('file:')) { const it = byId(id.slice(5)); return it ? iconOf(it) : '📄'; }
+  if (id.startsWith('site:')) return '🌐';
+  if (id.startsWith('run:')) return '▶️';
+  if (id === 'dochome') return '📘';
+  return '🗔';
+}
+function topWin(){ let best = null; allWins().forEach(w => { if (!w.classList.contains('min') && (!best || +w.style.zIndex > +best.style.zIndex)) best = w; }); return best; }
+function focusWin(w){
+  if (!w) return;
+  allWins().forEach(x => x.classList.remove('active'));
+  w.classList.add('active'); w.style.zIndex = ++z; renderTaskbar();
+}
+function minimizeWin(w){ w.classList.add('min'); w.classList.remove('active'); const t = topWin(); if (t) focusWin(t); else renderTaskbar(); }
+function restoreWin(w){ w.classList.remove('min'); focusWin(w); }
+function updateMaxBtn(w){ const b = w.querySelector('.wb.max'); if (b) { b.textContent = w.classList.contains('max') ? '❐' : '☐'; b.title = w.classList.contains('max') ? 'Restore' : 'Maximize'; } }
+function rectOf(w){ return {l:w.offsetLeft, t:w.offsetTop, w:w.offsetWidth, h:w.offsetHeight}; }
+function toggleMax(w){
+  if (w.classList.contains('max')) {
+    const r = JSON.parse(w.dataset.rect || 'null');
+    if (r) Object.assign(w.style, {left:r.l+'px', top:r.t+'px', width:r.w+'px', height:r.h+'px'});
+    w.classList.remove('max');
+  } else {
+    w.dataset.rect = JSON.stringify(rectOf(w));
+    Object.assign(w.style, {left:'0px', top:'0px', width:deskW()+'px', height:deskH()+'px'}); w.classList.add('max');
+  }
+  updateMaxBtn(w);
+}
+function snapWin(w, side){
+  if (!w.classList.contains('max')) w.dataset.rect = JSON.stringify(rectOf(w));
+  const half = Math.floor(deskW() / 2);
+  Object.assign(w.style, {left:(side === 'l' ? 0 : half)+'px', top:'0px', width:(side === 'l' ? half : deskW() - half)+'px', height:deskH()+'px'});
+  w.classList.add('max'); updateMaxBtn(w);
+}
 function makeWindow(id, title, x, y, w, h, build){
-  const existing = document.querySelector('.win[data-id="'+id+'"]');
-  if (existing) { focusWin(existing); return existing; }
+  const existing = wins.querySelector('.win[data-id="'+id+'"]');
+  if (existing) { existing.classList.remove('min'); focusWin(existing); return existing; }
+  w = Math.max(240, Math.min(w, deskW() - 8)); h = Math.max(160, Math.min(h, deskH() - 8));
+  x = Math.max(0, Math.min(x, deskW() - w)); y = Math.max(0, Math.min(y, deskH() - h));
   const win = document.createElement('div');
-  win.className = 'win'; win.dataset.id = id;
-  win.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
-  win.innerHTML = `<div class="titlebar"><div class="close"></div><div class="title">${title}</div></div><div class="content"></div><div class="resize"></div>`;
-  desktop.appendChild(win);
+  win.className = 'win'; win.dataset.id = id; win.dataset.icon = winIcon(id);
+  win.style.cssText = 'left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px';
+  win.innerHTML = '<div class="titlebar"><span class="wicon"></span><span class="title"></span><div class="wbtns"><button class="wb min" title="Minimize">—</button><button class="wb max" title="Maximize">☐</button><button class="wb close" title="Close">✕</button></div></div><div class="content"></div>' +
+    ['n','s','e','w','ne','nw','se','sw'].map(d => '<div class="rz" data-d="'+d+'"></div>').join('');
+  win.querySelector('.wicon').textContent = win.dataset.icon;
+  win.querySelector('.title').textContent = title;
+  wins.appendChild(win);
   build(win.querySelector('.content'), win);
   focusWin(win);
 
-  win.addEventListener('mousedown', () => focusWin(win));
-  win.querySelector('.close').onclick = () => win.remove();
+  win.addEventListener('mousedown', () => { if (!win.classList.contains('active')) focusWin(win); });
+  win.querySelector('.wb.close').onclick = () => win.remove();
+  win.querySelector('.wb.min').onclick = () => minimizeWin(win);
+  win.querySelector('.wb.max').onclick = () => toggleMax(win);
   const tb = win.querySelector('.titlebar');
+  tb.addEventListener('dblclick', e => { if (!e.target.closest('.wbtns')) toggleMax(win); });
   tb.addEventListener('mousedown', e => {
-    if (e.target.classList.contains('close')) return;
-    const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
-    const mv = ev => { win.style.left = Math.max(0, ev.clientX-ox)+'px'; win.style.top = Math.max(0, ev.clientY-oy)+'px'; };
-    const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
+    if (e.target.closest('.wbtns') || e.button) return;
+    let ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop, moved = false;
+    const mv = ev => {
+      if (!moved && Math.abs(ev.clientX - e.clientX) + Math.abs(ev.clientY - e.clientY) < 4) return;
+      moved = true;
+      if (win.classList.contains('max')) {
+        const ratio = ev.clientX / Math.max(1, win.offsetWidth);
+        const r = JSON.parse(win.dataset.rect || 'null') || {w:Math.min(700, deskW() - 40), h:Math.min(480, deskH() - 40)};
+        win.classList.remove('max'); win.style.width = r.w+'px'; win.style.height = r.h+'px'; ox = r.w * ratio; oy = 17; updateMaxBtn(win);
+      }
+      win.style.left = (ev.clientX - ox)+'px'; win.style.top = Math.max(0, Math.min(deskH() - 34, ev.clientY - oy))+'px';
+    };
+    const up = ev => {
+      document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up);
+      if (!moved) return;
+      if (ev.clientY <= 2) toggleMax(win); else if (ev.clientX <= 2) snapWin(win, 'l'); else if (ev.clientX >= deskW() - 3) snapWin(win, 'r');
+    };
     document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
   });
-  win.querySelector('.resize').addEventListener('mousedown', e => {
-    e.stopPropagation(); e.preventDefault();
-    const sx=e.clientX, sy=e.clientY, sw=win.offsetWidth, sh=win.offsetHeight;
-    const mv = ev => { win.style.width=Math.max(200,sw+ev.clientX-sx)+'px'; win.style.height=Math.max(120,sh+ev.clientY-sy)+'px'; };
+  win.querySelectorAll('.rz').forEach(hd => hd.addEventListener('mousedown', e => {
+    e.stopPropagation(); e.preventDefault(); focusWin(win);
+    const d = hd.dataset.d, sx = e.clientX, sy = e.clientY, L = win.offsetLeft, T = win.offsetTop, W = win.offsetWidth, H = win.offsetHeight;
+    const mv = ev => {
+      const dx = ev.clientX - sx, dy = ev.clientY - sy; let l = L, t = T, w2 = W, h2 = H;
+      if (d.includes('e')) w2 = Math.max(240, W + dx);
+      if (d.includes('s')) h2 = Math.max(160, H + dy);
+      if (d.includes('w')) { w2 = Math.max(240, W - dx); l = L + W - w2; }
+      if (d.includes('n')) { h2 = Math.max(160, H - dy); t = T + H - h2; }
+      Object.assign(win.style, {left:l+'px', top:Math.max(0, t)+'px', width:w2+'px', height:h2+'px'});
+    };
     const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
     document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
-  });
+  }));
   return win;
+}
+window.addEventListener('resize', () => {
+  sizeWall();
+  allWins().filter(w => w.classList.contains('max')).forEach(w => {
+    const half = w.offsetWidth < deskW() - 4 && w.offsetLeft === 0 ? 'l' : null;
+    Object.assign(w.style, {width:(half ? Math.floor(deskW()/2) : deskW())+'px', height:deskH()+'px'});
+  });
+  renderDesktop(true);
+});
+
+/* ---------- taskbar ---------- */
+const tbWins = $id('tbwins');
+function renderTaskbar(){
+  tbWins.innerHTML = '';
+  allWins().forEach(w => {
+    const mini = w.classList.contains('min'), on = w.classList.contains('active') && !mini;
+    const b = document.createElement('div');
+    b.className = 'tbtn open' + (on ? ' active' : '') + (mini ? ' mini' : '');
+    b.title = w.querySelector('.title').textContent; b.textContent = w.dataset.icon || '🗔';
+    b.onclick = () => { if (mini) restoreWin(w); else if (on) minimizeWin(w); else focusWin(w); };
+    b.onauxclick = e => { if (e.button === 1) w.remove(); };
+    b.oncontextmenu = e => { e.preventDefault(); popup(e.clientX, e.clientY, [{label:mini ? 'Restore' : 'Minimize', fn:() => mini ? restoreWin(w) : minimizeWin(w)}, {label:'Close window', fn:() => w.remove()}]); };
+    tbWins.appendChild(b);
+  });
+}
+new MutationObserver(() => {
+  renderTaskbar();
+  if (!wins.querySelector('.win.active:not(.min)')) { const t = topWin(); if (t) focusWin(t); }
+}).observe(wins, {childList:true});
+let hiddenByShowDesk = [];
+$id('showdesk').onclick = () => {
+  const open_ = allWins().filter(w => !w.classList.contains('min'));
+  if (open_.length) { hiddenByShowDesk = open_; open_.forEach(w => { w.classList.add('min'); w.classList.remove('active'); }); renderTaskbar(); }
+  else { hiddenByShowDesk.filter(w => w.isConnected).forEach(w => w.classList.remove('min')); const t = topWin(); if (t) focusWin(t); hiddenByShowDesk = []; }
+};
+
+/* ---------- start menu ---------- */
+const sm = $id('startmenu');
+function openBrowserWith(q){ apps.browser.open(); if (browserGo) browserGo(q); }
+function toggleStart(show){
+  const on = show === undefined ? !sm.classList.contains('show') : show;
+  sm.classList.toggle('show', on); $id('tstart').classList.toggle('on', on);
+  if (on) { closeCal(); const i = sm.querySelector('.sm-search'); i.value = ''; renderStart(''); setTimeout(() => i.focus(), 0); }
+}
+function renderStart(q){
+  const body = sm.querySelector('.sm-body'); body.innerHTML = ''; q = q.trim().toLowerCase();
+  const head = t => { const h = document.createElement('h5'); h.textContent = t; body.appendChild(h); };
+  const row = (icon, label, tag, fn) => {
+    const r = document.createElement('div'); r.className = 'sm-row'; r.innerHTML = '<span></span><div></div><small></small>';
+    r.children[0].textContent = icon; r.children[1].textContent = label; r.children[2].textContent = tag || '';
+    r.onclick = () => { toggleStart(false); fn(); }; body.appendChild(r); return r;
+  };
+  if (!q) {
+    head('Pinned');
+    const g = document.createElement('div'); g.className = 'sm-grid';
+    order.forEach(id => {
+      const a = apps[id], t = document.createElement('div'); t.className = 'sm-app'; t.innerHTML = '<span></span><div></div>';
+      t.children[0].textContent = a.icon; t.children[1].textContent = a.name; t.onclick = () => { toggleStart(false); a.open(); }; g.appendChild(t);
+    });
+    body.appendChild(g);
+    const recent = FS.filter(x => x.type === 'file' && !x.trashed).sort((a, b) => b.modified - a.modified).slice(0, 5);
+    if (recent.length) { head('Recent'); recent.forEach(it => row(iconOf(it), it.name, dateLabel(it.modified), () => openFile(it.id))); }
+  } else {
+    head('Best match');
+    order.forEach(id => { if (apps[id].name.toLowerCase().includes(q)) row(apps[id].icon, apps[id].name, 'App', () => apps[id].open()); });
+    FS.filter(x => !x.trashed && x.name.toLowerCase().includes(q)).slice(0, 8).forEach(it => row(iconOf(it), it.name, it.type === 'folder' ? 'Folder' : 'File', () => it.type === 'folder' ? openExplorer(it.id) : openFile(it.id)));
+    row('🌐', 'Search the web for “' + q + '”', 'Web', () => openBrowserWith(q));
+  }
+}
+sm.querySelector('.sm-search').addEventListener('input', e => renderStart(e.target.value));
+sm.querySelector('.sm-search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { const r = sm.querySelector('.sm-body .sm-row'); if (r) r.click(); }
+  if (e.key === 'Escape') toggleStart(false);
+});
+$id('tstart').onclick = () => toggleStart();
+$id('tsearch').onclick = () => toggleStart(true);
+$id('sm-docs').onclick = () => { toggleStart(false); openExplorer(documentsId()); };
+$id('sm-pics').onclick = () => { toggleStart(false); const f = FS.find(x => x.parent === 'root' && x.name === 'Pictures' && !x.trashed); openExplorer(f ? f.id : 'root'); };
+$id('sm-set').onclick = () => { toggleStart(false); apps.settings.open(); };
+$id('sm-power').onclick = e => {
+  const r = e.currentTarget.getBoundingClientRect();
+  popup(r.right + 6, r.top, [
+    {label:'Sign out', fn:() => { toggleStart(false); showLock(); }},
+    {label:'Restart', fn:() => act('restart')},
+    {label:'Close all windows', fn:() => { toggleStart(false); act('closeAll'); }}, '-',
+    {label:'Download Lakshiv OS…', fn:() => act('dlos')},
+    {label:'Install as app…', fn:() => act('install')},
+    {label:'About Lakshiv OS', fn:() => act('about')}
+  ]);
+};
+
+/* ---------- calendar ---------- */
+let calOff = 0;
+function drawCal(){
+  const cal = $id('cal'), n = new Date(), first = new Date(n.getFullYear(), n.getMonth() + calOff, 1);
+  cal.innerHTML = '<div class="cal-h"><b></b><div><button data-d="-1" title="Previous month">▲</button><button data-d="1" title="Next month">▼</button></div></div><div class="cal-g"></div>';
+  cal.querySelector('b').textContent = first.toLocaleDateString('en-US', {month:'long', year:'numeric'});
+  const g = cal.querySelector('.cal-g');
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => { const c = document.createElement('div'); c.className = 'dow'; c.textContent = d; g.appendChild(c); });
+  const start = new Date(first); start.setDate(1 - first.getDay());
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const c = document.createElement('div'); c.textContent = d.getDate();
+    if (d.getMonth() !== first.getMonth()) c.className = 'dim';
+    if (d.toDateString() === n.toDateString()) c.className = 'today';
+    g.appendChild(c);
+  }
+  cal.querySelectorAll('button').forEach(b => b.onclick = () => { calOff += +b.dataset.d; drawCal(); });
+}
+function closeCal(){ $id('cal').classList.remove('show'); }
+$id('clock').onclick = () => {
+  const c = $id('cal'), on = !c.classList.contains('show');
+  if (on) { toggleStart(false); calOff = 0; drawCal(); }
+  c.classList.toggle('show', on);
+};
+document.addEventListener('mousedown', e => {
+  if (sm.classList.contains('show') && !e.target.closest('#startmenu,#tstart,#tsearch,.pop')) toggleStart(false);
+  if (!e.target.closest('#cal,#clock,.pop')) closeCal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { toggleStart(false); closeCal(); } });
+
+/* ---------- settings ---------- */
+function buildSettings(c){
+  c.style.overflow = 'hidden';
+  c.innerHTML = '<div class="st"><div class="st-nav"></div><div class="st-body"></div></div>';
+  const nav = c.querySelector('.st-nav'), body = c.querySelector('.st-body'); let tab = 'p';
+  const draw = () => {
+    nav.innerHTML = '';
+    [['p', '🎨  Personalization'], ['s', '💻  System']].forEach(([k, l]) => {
+      const d = document.createElement('div'); d.textContent = l; if (k === tab) d.className = 'cur'; d.onclick = () => { tab = k; draw(); }; nav.appendChild(d);
+    });
+    body.innerHTML = '';
+    if (tab === 'p') {
+      body.innerHTML = '<h3>Personalization</h3><h4>Background</h4><div class="wp-grid"></div><h4>Animation</h4><label><input type="checkbox" class="anim"> Animate the wallpaper</label><h4>Accent color</h4><div class="acc-row"></div>';
+      const grid = body.querySelector('.wp-grid');
+      Object.entries(WALLS).forEach(([id, cfg]) => {
+        const d = document.createElement('div'); d.className = 'wp' + (id === wallId ? ' cur' : ''); d.dataset.wall = id;
+        d.style.background = 'linear-gradient(180deg,' + cfg.bg[0] + ',' + cfg.bg[1] + ' 60%,' + cfg.layers[1] + ')';
+        const sp = document.createElement('span'); sp.textContent = cfg.name; d.appendChild(sp);
+        d.onclick = () => { setWall(id); draw(); }; grid.appendChild(d);
+      });
+      const cb = body.querySelector('.anim'); cb.checked = wallAnim; cb.onchange = () => setAnim(cb.checked);
+      const row = body.querySelector('.acc-row'), cur = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+      ['#0078d4', '#e81123', '#107c10', '#8764b8', '#ff8c00', '#00b7c3', '#e3008c'].forEach(col => {
+        const a = document.createElement('div'); a.className = 'acc' + (col === cur ? ' cur' : ''); a.style.background = col; a.dataset.accent = col;
+        a.onclick = () => { setAccent(col, true); draw(); }; row.appendChild(a);
+      });
+    } else {
+      let bytes = 0;
+      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith('los-')) bytes += k.length + (localStorage.getItem(k) || '').length; } } catch(e){}
+      body.innerHTML = '<h3>System</h3><h4>About</h4><div>Lakshiv OS 1<br>A desktop environment in your browser.</div><h4>Storage</h4><div class="stor"></div><h4>Get the app</h4><div class="row"><button class="btn dl">Download Lakshiv OS</button><button class="btn ins">Install as app…</button></div><h4>Reset</h4><div class="row"><button class="btn rst">Erase all files and settings…</button></div>';
+      body.querySelector('.stor').textContent = 'Your files and settings use about ' + Math.max(1, Math.round(bytes / 1024)) + ' KB of this browser’s storage.';
+      body.querySelector('.dl').onclick = () => act('dlos');
+      body.querySelector('.ins').onclick = () => act('install');
+      body.querySelector('.rst').onclick = () => confirmBox('Erase every file, document and setting from this browser? This cannot be undone.', () => {
+        try { Object.keys(localStorage).filter(k => k.startsWith('los-')).forEach(k => localStorage.removeItem(k)); } catch(e){}
+        location.reload();
+      });
+    }
+  };
+  draw();
 }
 
 /* ---------- file system ---------- */
@@ -407,7 +752,7 @@ function purgeItems(ids){
   FS = FS.filter(x => !rm.has(x.id)); saveFs();
 }
 let explorerRefresh = null, explorerGo = null, explorerCwd = null;
-function refreshExplorer(){ if (explorerRefresh && document.querySelector('.win[data-id="files"]')) explorerRefresh(); refreshDocsHome(); }
+function refreshExplorer(){ if (explorerRefresh && document.querySelector('.win[data-id="files"]')) explorerRefresh(); refreshDocsHome(); renderDesktop(); }
 function emptyTrash(){
   const ids = FS.filter(x => x.trashed).map(x => x.id);
   if (!ids.length) return alertBox('The Recycle Bin is already empty.');
@@ -757,7 +1102,7 @@ function openDoc(id){
     title.onchange = rename;
     title.onkeydown = e => { if (e.key === 'Enter') { rename(); page.focus(); } };
     page.addEventListener('input', onInput);
-    ['keyup', 'mouseup', 'focus'].forEach(ev => page.addEventListener(ev, () => { saveRange(); syncState(); }));
+    ['keyup', 'mouseup', 'input'].forEach(ev => page.addEventListener(ev, () => { saveRange(); syncState(); }));
     page.addEventListener('blur', () => { saveRange(); if (timer) save(); });
     page.addEventListener('paste', e => {
       e.preventDefault();
@@ -968,7 +1313,7 @@ function buildExplorer(c){
     else m = [{label:'New folder', fn:() => doNew('folder')}, {label:'New text document', fn:() => doNew('txt')}, {label:'New HTML file', fn:() => doNew('html')}, '-', {label:'Paste', fn:doPaste, dis:!clip}, {label:'Refresh', fn:refresh}];
     popup(e.clientX, e.clientY, m);
   }
-  function refresh(){ renderNav(); renderBar(); renderSide(); renderList(); renderPrev(); renderStatus(); refreshDocsHome(); }
+  function refresh(){ renderNav(); renderBar(); renderSide(); renderList(); renderPrev(); renderStatus(); refreshDocsHome(); renderDesktop(); }
 
   /* wiring */
   $('[data-k=back]').onclick = () => { if (hi > 0) { hi--; navigate(hist[hi], false); } };
@@ -1019,6 +1364,7 @@ const SITES = {
     ['👻','Pac-Man','https://platzh1rsch.github.io/pacman/']
   ]
 };
+let browserGo = null;
 function openSite(name, url){
   makeWindow('site:'+url, name, 60+Math.random()*80, 40+Math.random()*60, 620, 440, c => {
     c.style.display='flex'; c.style.flexDirection='column'; c.style.overflow='hidden';
@@ -1031,41 +1377,25 @@ function openSite(name, url){
 let pins = [];
 try { pins = JSON.parse(localStorage.getItem('los-pins') || '[]'); } catch(e){}
 const savePins = () => { try { localStorage.setItem('los-pins', JSON.stringify(pins)); } catch(e){} };
-function addPinIcon(p){
-  if (document.getElementById('pin-'+p.url)) return;
-  const el = document.createElement('div'); el.className = 'icon'; el.id = 'pin-'+p.url;
-  const n = document.querySelectorAll('.icon[id^="pin-"]').length;
-  el.style.left = (10 + Math.floor(n/6)*90)+'px'; el.style.top = (10 + (n%6)*90)+'px';
-  el.innerHTML = '<div class="glyph"></div><span></span>';
-  el.querySelector('.glyph').textContent = p.icon; el.querySelector('span').textContent = p.name;
-  el.onclick = e => { document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel')); el.classList.add('sel'); e.stopPropagation(); };
-  el.ondblclick = () => openSite(p.name, p.url);
-  el.addEventListener('mousedown', e => {
-    const ox=e.clientX-el.offsetLeft, oy=e.clientY-el.offsetTop;
-    const mv=ev=>{ el.style.left=(ev.clientX-ox)+'px'; el.style.top=(ev.clientY-oy)+'px'; };
-    const up=()=>{ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
-    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
-  });
-  desktop.appendChild(el);
-}
 function togglePin(icon, name, url){
   const i = pins.findIndex(p => p.url === url);
-  if (i >= 0) { pins.splice(i,1); const el=document.getElementById('pin-'+url); if (el) el.remove(); }
-  else { const p={icon,name,url}; pins.push(p); addPinIcon(p); }
-  savePins();
+  if (i >= 0) pins.splice(i, 1); else pins.push({icon, name, url});
+  savePins(); renderDesktop(true);
 }
 
 /* ---------- apps ---------- */
 const apps = {
   readme: { icon:'📄', name:'Read Me', open(){
-    makeWindow('readme','Read Me',90,60,380,300,c=>{
-      c.innerHTML = `<div class="pad"><b>Welcome to Lakshiv OS 1</b><br><br>
-      This is a test operating system running entirely in your browser.<br><br>
-      • Double-click icons to open apps<br>
-      • Drag windows by the title bar<br>
-      • Resize from the bottom-right corner<br>
-      • Click the square to close<br>
-      • Make files with File ▸ New File (or the Files app)<br>• Try the menus at the top, and type <code>help</code> in Terminal.</div>`; }); } },
+    makeWindow('readme','Read Me',90,50,460,360,c=>{
+      c.innerHTML = `<div class="pad"><b style="font-size:16px">Welcome to Lakshiv OS</b><br><br>
+      A desktop environment that runs entirely in your browser.<br><br>
+      • <b>Start menu</b>: click the Windows logo, or just type to search apps, files and the web<br>
+      • <b>Windows</b>: drag by the title bar, resize from any edge, minimize, maximize or snap to a screen edge<br>
+      • <b>Taskbar</b>: click an app to minimize or restore it; right-click for more<br>
+      • <b>Desktop</b>: right-click to create files and folders; double-click an icon to open it<br>
+      • <b>Files</b> and <b>Docs</b> save in your browser; the Recycle Bin holds deleted items<br>
+      • <b>Settings</b>: change the wallpaper and accent color<br>
+      • Click the clock for the calendar.</div>`;}); } },
 
   notes: { icon:'📝', name:'Notes', open(){
     makeWindow('notes','Notes',150,100,340,260,c=>{
@@ -1075,7 +1405,7 @@ const apps = {
       c.appendChild(t); }); } },
 
   calc: { icon:'🧮', name:'Calculator', open(){
-    makeWindow('calc','Calculator',260,80,240,300,c=>{
+    makeWindow('calc','Calculator',260,60,262,404,c=>{
       c.innerHTML = '<div class="calc"><div class="disp">0</div><div class="keys"></div></div>';
       const disp = c.querySelector('.disp'), keys = c.querySelector('.keys'); let expr='';
       '7 8 9 / 4 5 6 * 1 2 3 - 0 . = +'.split(' ').concat(['C']).forEach(k=>{
@@ -1102,12 +1432,12 @@ const apps = {
         const [name, ...rest] = cmd.split(' ');
         const arg = rest.join(' ');
         const cmds = {
-          help:()=>'help, date, echo, ls, open <app>, clear, whoami, theme <color>',
+          help:()=>'help, date, echo, ls, open <app>, clear, whoami, theme <wallpaper>',
           date:()=>new Date().toString(),
           echo:()=>arg,
           whoami:()=>'guest@lakshiv-os',
           ls:()=>Object.keys(apps).join('  '),
-          theme:()=>{ document.body.style.setProperty('--desk', arg||'#6b8cae'); return 'ok'; },
+          theme:()=>{ if(WALLS[arg]){ setWall(arg); return 'wallpaper set to '+arg; } return 'wallpapers: '+Object.keys(WALLS).join(', '); },
           clear:()=>{ out.innerHTML=''; return ''; },
           open:()=>{ if (apps[arg]) { apps[arg].open(); return 'opening '+arg; } return 'no such app: '+arg; }
         };
@@ -1168,6 +1498,7 @@ const apps = {
         else u='https://en.wikipedia.org/wiki/Special:Search?search='+encodeURIComponent(raw);
         hist=hist.slice(0,idx+1); hist.push(u); idx=hist.length-1; show();
       }
+      browserGo = go;
       url.onkeydown=e=>{ if(e.key==='Enter') go(url.value); };
       $('.bb').onclick=()=>{ if(idx>0){ idx--; show(); } };
       $('.bf').onclick=()=>{ if(idx<hist.length-1){ idx++; show(); } };
@@ -1181,9 +1512,9 @@ const apps = {
       c.innerHTML = '<div class="pad"></div>';
       const box = c.firstChild;
       const draw = () => {
-        box.innerHTML = '<b>App Store</b><br><small>Double-click is not needed: click Open. Pin puts an app on your desktop. If an app stays blank, the site may have changed its rules; use ↗ New tab.</small><br>';
+        box.innerHTML = '<b>App Store</b><br><small>Click Open to run an app in its own window. Pin puts it on your desktop. If an app stays blank, the site may block embedding, so use the ↗ New tab button.</small><br>';
         Object.entries(SITES).forEach(([cat, list]) => {
-          const h = document.createElement('div'); h.style.cssText='margin:10px 0 2px;font-weight:bold;border-bottom:2px solid #000'; h.textContent = cat; box.appendChild(h);
+          const h = document.createElement('div'); h.style.cssText='margin:12px 0 4px;font-weight:600;padding-bottom:3px;border-bottom:1px solid #d5dbe3'; h.textContent = cat; box.appendChild(h);
           list.forEach(([ic, name, url]) => {
             const row = document.createElement('div'); row.className='file';
             const label = document.createElement('span'); label.style.flex='1'; label.textContent = ic+'  '+name;
@@ -1200,32 +1531,107 @@ const apps = {
 
   docs: { icon:'📘', name:'Docs', open(){ openDocsHome(); } },
 
-  trash: { icon:'🗑️', name:'Trash', open(){ openExplorer('trash'); } }
-};
-function open(id){ apps[id].open(); }
+  settings: { icon:'⚙️', name:'Settings', open(){ makeWindow('settings','Settings',110,50,Math.min(700,innerWidth-40),Math.min(480,innerHeight-80),buildSettings); } },
 
-/* ---------- desktop icons ---------- */
-const order = ['readme','files','docs','notes','calc','terminal','browser','store','paint','trash'];
-function layoutIcons(){
-  const h = Math.max(300, window.innerHeight-24); const per = Math.max(1, Math.floor((h-20)/90));
-  order.forEach((id,i)=>{ const el=document.getElementById('icon-'+id); el.style.left=(window.innerWidth-100-Math.floor(i/per)*90)+'px'; el.style.top=(10+(i%per)*90)+'px'; });
+  trash: { icon:'🗑️', name:'Recycle Bin', open(){ openExplorer('trash'); } }
+};
+/* ---------- desktop ---------- */
+const order = ['files','docs','notes','calc','terminal','browser','store','paint','settings','readme','trash'];
+const ICON_W = 90, ICON_H = 92, ICON_PAD = 8;
+let iconPos = {};
+try { iconPos = JSON.parse(store.get('los-iconpos', '{}')) || {}; } catch(e){}
+const selIcons = new Set();
+let deskSig = '';
+function desktopFolderId(){ const d = FS.find(x => x.parent === 'root' && x.name === 'Desktop' && !x.trashed); return d ? d.id : null; }
+function desktopEntries(){
+  const out = [];
+  order.forEach(id => out.push({key:'app:'+id, id, kind:'app', icon:apps[id].icon, label:apps[id].name, open:() => apps[id].open()}));
+  pins.forEach(p => out.push({key:'pin:'+p.url, kind:'pin', pin:p, icon:p.icon, label:p.name, open:() => openSite(p.name, p.url)}));
+  const df = desktopFolderId();
+  if (df) kids(df).sort((a, b) => a.name.localeCompare(b.name)).forEach(it => out.push({key:'fs:'+it.id, kind:'fs', it, icon:iconOf(it), label:it.name, open:() => it.type === 'folder' ? openExplorer(it.id) : openFile(it.id)}));
+  return out;
 }
-order.forEach(id=>{
-  const a=apps[id], el=document.createElement('div'); el.className='icon'; el.id='icon-'+id;
-  el.innerHTML=`<div class="glyph">${a.icon}</div><span>${a.name}</span>`;
-  el.onclick=e=>{ document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel')); el.classList.add('sel'); e.stopPropagation(); };
-  el.ondblclick=()=>a.open();
-  // drag icons
-  el.addEventListener('mousedown', e=>{
-    const ox=e.clientX-el.offsetLeft, oy=e.clientY-el.offsetTop;
-    const mv=ev=>{ el.style.left=(ev.clientX-ox)+'px'; el.style.top=(ev.clientY-oy)+'px'; };
-    const up=()=>{ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
-    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+function markSel(){ desktop.querySelectorAll('.icon').forEach(el => el.classList.toggle('sel', selIcons.has(el.dataset.key))); }
+function renameItemPrompt(it){
+  promptBox('New name:', it.name, raw => {
+    const name = cleanName(raw); if (!name || name === it.name) return;
+    if (FS.some(x => x.parent === it.parent && !x.trashed && x.id !== it.id && x.name.toLowerCase() === name.toLowerCase())) return alertBox('That name is already used here.');
+    it.name = name; saveFs(); refreshExplorer();
   });
-  desktop.appendChild(el);
+}
+function newOnDesktop(kind){
+  const df = desktopFolderId(); if (!df) return alertBox('The Desktop folder is missing.');
+  if (kind === 'folder') return promptBox('Folder name:', 'New folder', raw => { const n = cleanName(raw); if (!n) return; createItem(df, 'folder', n, ''); refreshExplorer(); });
+  newFileDialog(df, kind, it => { refreshExplorer(); openFile(it.id); });
+}
+function iconMenu(e, en){
+  e.preventDefault(); e.stopPropagation();
+  const m = [{label:'Open', fn:en.open}];
+  if (en.kind === 'pin') m.push({label:'Remove from desktop', fn:() => togglePin(en.pin.icon, en.pin.name, en.pin.url)});
+  if (en.kind === 'fs') m.push('-', {label:'Rename', fn:() => renameItemPrompt(en.it)}, {label:'Delete', fn:() => { trashItems([en.it.id]); refreshExplorer(); }});
+  if (en.kind === 'app' && en.id === 'trash') m.push({label:'Empty Recycle Bin', fn:emptyTrash});
+  popup(e.clientX, e.clientY, m);
+}
+function renderDesktop(force){
+  const entries = desktopEntries();
+  const sig = entries.map(e => e.key + '|' + e.label + '|' + e.icon).join('~') + '|' + window.innerHeight;
+  if (!force && sig === deskSig) return; deskSig = sig;
+  desktop.innerHTML = '';
+  const per = Math.max(1, Math.floor((deskH() - ICON_PAD) / ICON_H));
+  const cell = (x, y) => Math.round((x - ICON_PAD) / ICON_W) + ',' + Math.round((y - ICON_PAD) / ICON_H);
+  const used = new Set();
+  entries.forEach(e => { const p = iconPos[e.key]; if (p) { e.x = Math.max(0, Math.min(p.x, deskW() - ICON_W)); e.y = Math.max(0, Math.min(p.y, deskH() - ICON_H)); used.add(cell(e.x, e.y)); } });
+  let slot = 0;
+  entries.forEach(e => {
+    if (e.x !== undefined) return;
+    for (;; slot++) {
+      const x = ICON_PAD + Math.floor(slot / per) * ICON_W, y = ICON_PAD + (slot % per) * ICON_H;
+      if (!used.has(cell(x, y))) { e.x = x; e.y = y; used.add(cell(x, y)); slot++; break; }
+    }
+  });
+  entries.forEach(e => {
+    const el = document.createElement('div'); el.className = 'icon'; el.dataset.key = e.key;
+    if (e.kind === 'app') el.id = 'icon-' + e.id;
+    el.style.left = e.x + 'px'; el.style.top = e.y + 'px';
+    el.innerHTML = '<div class="glyph"></div><span class="lbl"></span>';
+    el.querySelector('.glyph').textContent = e.icon; el.querySelector('.lbl').textContent = e.label; el.title = e.label;
+    el.ondblclick = ev => { ev.stopPropagation(); e.open(); };
+    el.onclick = ev => ev.stopPropagation();
+    el.oncontextmenu = ev => { if (!selIcons.has(e.key)) { selIcons.clear(); selIcons.add(e.key); markSel(); } iconMenu(ev, e); };
+    el.addEventListener('mousedown', ev => {
+      if (ev.button) return; ev.stopPropagation();
+      if (!selIcons.has(e.key)) { if (!(ev.ctrlKey || ev.metaKey)) selIcons.clear(); selIcons.add(e.key); markSel(); }
+      const sx = ev.clientX, sy = ev.clientY, ox = el.offsetLeft, oy = el.offsetTop; let moved = false;
+      const mv = m => {
+        if (!moved && Math.abs(m.clientX - sx) + Math.abs(m.clientY - sy) < 5) return;
+        moved = true; el.classList.add('drag'); el.style.left = (ox + m.clientX - sx) + 'px'; el.style.top = (oy + m.clientY - sy) + 'px';
+      };
+      const up = () => {
+        document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up);
+        if (!moved) return; el.classList.remove('drag');
+        let x = Math.round((el.offsetLeft - ICON_PAD) / ICON_W) * ICON_W + ICON_PAD, y = Math.round((el.offsetTop - ICON_PAD) / ICON_H) * ICON_H + ICON_PAD;
+        x = Math.max(0, Math.min(x, deskW() - ICON_W)); y = Math.max(0, Math.min(y, deskH() - ICON_H));
+        if ([...desktop.children].some(o => o !== el && o.offsetLeft === x && o.offsetTop === y)) { x = ox; y = oy; }
+        el.style.left = x + 'px'; el.style.top = y + 'px';
+        iconPos[e.key] = {x, y}; store.set('los-iconpos', JSON.stringify(iconPos));
+      };
+      document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+    });
+    desktop.appendChild(el);
+  });
+  markSel();
+}
+desktop.addEventListener('mousedown', e => { if (e.target === desktop) { selIcons.clear(); markSel(); } });
+desktop.addEventListener('contextmenu', e => {
+  if (e.target !== desktop) return; e.preventDefault();
+  const mk = (label, kind) => ({label, fn:() => newOnDesktop(kind)});
+  popup(e.clientX, e.clientY, [mk('New folder', 'folder'), mk('New text document', 'txt'), mk('New document', 'ldoc'), mk('New HTML file', 'html'), '-',
+    {label:'Refresh', fn:() => renderDesktop(true)},
+    {label:'Clean up icons', fn:() => { iconPos = {}; store.set('los-iconpos', '{}'); renderDesktop(true); }}, '-',
+    {label:'Open terminal', fn:() => apps.terminal.open()}, {label:'Personalize', fn:() => apps.settings.open()}]);
 });
-layoutIcons(); pins.forEach(addPinIcon); window.addEventListener('resize', layoutIcons);
-desktop.addEventListener('click', ()=>document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel')));
+function open(id){ apps[id].open(); }
+sizeWall(); startWall(); renderDesktop(true); renderTaskbar();
 </script>
 </body>
 </html>
