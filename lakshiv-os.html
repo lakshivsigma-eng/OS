@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Lakshiv OS 1</title>
+<style>
+  :root { --bg:#fff; --fg:#000; --desk:#6b8cae; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { height:100%; overflow:hidden; font-family:"Chicago","Geneva","Courier New",monospace; font-size:13px; color:var(--fg); user-select:none; }
+  body { background:var(--desk); background-image:radial-gradient(#00000022 1px, transparent 1px); background-size:4px 4px; }
+
+  /* boot */
+  #boot { position:fixed; inset:0; background:#000; color:#fff; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; cursor:pointer; }
+  #boot h1 { font-size:28px; letter-spacing:2px; }
+  #boot p { opacity:.7; animation:blink 1.2s steps(2) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* menu bar */
+  #menubar { position:fixed; top:0; left:0; right:0; height:24px; background:#fff; border-bottom:2px solid #000; display:flex; align-items:center; padding:0 8px; gap:4px; z-index:5000; }
+  .menu { position:relative; padding:2px 10px; cursor:default; }
+  .menu:hover, .menu.open { background:#000; color:#fff; }
+  .menu .drop { display:none; position:absolute; top:100%; left:0; background:#fff; color:#000; border:2px solid #000; box-shadow:3px 3px 0 #000; min-width:170px; z-index:6000; }
+  .menu.open .drop { display:block; }
+  .drop div { padding:4px 14px; white-space:nowrap; }
+  .drop div:hover { background:#000; color:#fff; }
+  .drop hr { border:0; border-top:1px solid #000; margin:2px 0; }
+  #clock { margin-left:auto; padding-right:6px; }
+  #apple { font-weight:bold; }
+
+  /* desktop icons */
+  #desktop { position:absolute; inset:24px 0 0 0; }
+  .icon { position:absolute; width:84px; text-align:center; cursor:default; padding:4px; }
+  .icon .glyph { font-size:34px; line-height:40px; filter:grayscale(1) contrast(1.4); }
+  .icon span { display:inline-block; background:#fff; padding:0 4px; margin-top:3px; font-size:12px; }
+  .icon.sel .glyph { filter:invert(1); background:#000; }
+  .icon.sel span { background:#000; color:#fff; }
+
+  /* windows */
+  .win { position:absolute; background:#fff; border:2px solid #000; box-shadow:4px 4px 0 #000; display:flex; flex-direction:column; min-width:200px; min-height:120px; }
+  .win.active { z-index:3000; }
+  .titlebar { height:22px; border-bottom:2px solid #000; display:flex; align-items:center; padding:0 6px; cursor:grab; background:
+      repeating-linear-gradient(#000 0 1px, #fff 1px 3px); background-size:100% 100%; position:relative; }
+  .win:not(.active) .titlebar { background:#fff; }
+  .titlebar .close { width:14px; height:14px; border:2px solid #000; background:#fff; cursor:pointer; flex:none; z-index:1; }
+  .titlebar .title { position:absolute; left:50%; transform:translateX(-50%); background:#fff; padding:0 10px; white-space:nowrap; }
+  .content { flex:1; overflow:auto; position:relative; user-select:text; }
+  .resize { position:absolute; right:0; bottom:0; width:14px; height:14px; cursor:nwse-resize; background:linear-gradient(135deg,transparent 50%,#000 50%); }
+  .pad { padding:12px; line-height:1.5; }
+
+  /* apps */
+  textarea.notes { width:100%; height:100%; border:0; outline:0; resize:none; padding:10px; font:inherit; background:#fffff0; }
+  .calc { padding:8px; width:220px; }
+  .calc .disp { border:2px solid #000; text-align:right; padding:6px; font-size:20px; margin-bottom:6px; background:#e8f0e0; min-height:34px; }
+  .calc .keys { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
+  .calc button, .btn { font:inherit; border:2px solid #000; background:#fff; padding:8px 0; cursor:pointer; box-shadow:2px 2px 0 #000; }
+  .calc button:active, .btn:active { background:#000; color:#fff; box-shadow:none; }
+  .term { background:#000; color:#7CFC00; height:100%; padding:8px; overflow:auto; font-family:"Courier New",monospace; user-select:text; }
+  .term .line { white-space:pre-wrap; }
+  .term input { background:transparent; border:0; outline:0; color:#7CFC00; font:inherit; width:80%; }
+  canvas.paint { background:#fff; display:block; cursor:crosshair; }
+  .toolbar { border-bottom:2px solid #000; padding:4px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .sw { width:18px; height:18px; border:2px solid #000; cursor:pointer; }
+  .file { display:flex; gap:8px; align-items:center; padding:4px 8px; cursor:default; }
+  .file:hover { background:#000; color:#fff; }
+  .mine { display:grid; grid-template-columns:repeat(8,24px); gap:1px; background:#999; padding:1px; width:max-content; margin:8px auto; }
+  .mine .c { width:24px; height:24px; background:#ddd; border:2px outset #fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:13px; cursor:pointer; }
+  .mine .c.open { background:#eee; border:1px solid #aaa; }
+  .alert { position:fixed; inset:0; background:#0006; display:flex; align-items:center; justify-content:center; z-index:8000; }
+  .alert .box { background:#fff; border:3px double #000; padding:18px; max-width:320px; box-shadow:5px 5px 0 #000; }
+  .alert .btn { padding:4px 18px; margin-top:12px; float:right; }
+</style>
+</head>
+<body>
+
+<div id="boot">
+  <h1>LAKSHIV OS 1</h1>
+  <div>A tiny operating system that lives in your browser.</div>
+  <p>Click to enter.</p>
+</div>
+
+<div id="menubar">
+  <div class="menu" id="apple">◆
+    <div class="drop">
+      <div data-act="about">About Lakshiv OS…</div><hr>
+      <div data-open="readme">Read Me</div>
+      <div data-open="notes">Notes</div>
+      <div data-open="calc">Calculator</div>
+      <div data-open="terminal">Terminal</div>
+      <div data-open="browser">Browser</div>
+      <div data-open="store">App Store</div>
+    </div>
+  </div>
+  <div class="menu">File
+    <div class="drop">
+      <div data-act="newfile">New File…</div>
+      <div data-open="files">Open Files</div>
+      <div data-act="closeAll">Close All Windows</div>
+      <hr><div data-act="restart">Restart</div>
+    </div>
+  </div>
+  <div class="menu">Edit
+    <div class="drop"><div data-act="nop">Undo</div><div data-act="nop">Copy</div><div data-act="nop">Paste</div></div>
+  </div>
+  <div class="menu">View
+    <div class="drop">
+      <div data-act="tidy">Clean Up Desktop</div><hr>
+      <div data-act="bg:#6b8cae">Blue Desktop</div>
+      <div data-act="bg:#3b7a57">Green Desktop</div>
+      <div data-act="bg:#a0522d">Brown Desktop</div>
+      <div data-act="bg:#555">Gray Desktop</div>
+    </div>
+  </div>
+  <div class="menu">Special
+    <div class="drop">
+      <div data-open="paint">Paint</div>
+      <div data-act="empty">Empty Trash</div>
+    </div>
+  </div>
+  <div class="menu">Help
+    <div class="drop"><div data-open="readme">How to use</div></div>
+  </div>
+  <div id="clock">--:--</div>
+</div>
+
+<div id="desktop"></div>
+
+<script>
+const desktop = document.getElementById('desktop');
+let z = 10, trash = ['old_homework.txt','todo.bak'];
+
+/* ---------- boot / clock / menus ---------- */
+document.getElementById('boot').onclick = e => { e.currentTarget.remove(); open('readme'); };
+const clock = () => { document.getElementById('clock').textContent = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); };
+clock(); setInterval(clock, 10000);
+
+document.querySelectorAll('.menu').forEach(m => {
+  m.addEventListener('mousedown', e => {
+    if (e.target.closest('.drop') ) return;
+    const was = m.classList.contains('open');
+    closeMenus(); if (!was) m.classList.add('open');
+    e.stopPropagation();
+  });
+});
+function closeMenus(){ document.querySelectorAll('.menu.open').forEach(m=>m.classList.remove('open')); }
+document.addEventListener('mousedown', e => { if (!e.target.closest('.menu')) closeMenus(); });
+document.querySelectorAll('.drop div').forEach(d => d.addEventListener('click', () => {
+  closeMenus();
+  if (d.dataset.open) open(d.dataset.open);
+  if (d.dataset.act) act(d.dataset.act);
+}));
+
+function act(a){
+  if (a === 'about') return alertBox('Lakshiv OS 1\n\nA test operating system built with HTML, CSS and JavaScript.');
+  if (a === 'newfile') return newFile();
+  if (a === 'closeAll') document.querySelectorAll('.win').forEach(w=>w.remove());
+  if (a === 'restart') location.reload();
+  if (a === 'tidy') layoutIcons();
+  if (a === 'empty') { trash = []; alertBox('Trash emptied.'); }
+  if (a.startsWith('bg:')) document.body.style.setProperty('--desk', a.slice(3));
+}
+function alertBox(msg){
+  const el = document.createElement('div'); el.className='alert';
+  el.innerHTML = '<div class="box"><div style="white-space:pre-wrap"></div><button class="btn">OK</button></div>';
+  el.querySelector('.box > div').textContent = msg;
+  el.querySelector('button').onclick = () => el.remove();
+  document.body.appendChild(el);
+}
+
+/* ---------- window manager ---------- */
+function focusWin(w){ document.querySelectorAll('.win').forEach(x=>x.classList.remove('active')); w.classList.add('active'); w.style.zIndex = ++z; }
+function makeWindow(id, title, x, y, w, h, build){
+  const existing = document.querySelector('.win[data-id="'+id+'"]');
+  if (existing) { focusWin(existing); return existing; }
+  const win = document.createElement('div');
+  win.className = 'win'; win.dataset.id = id;
+  win.style.cssText = `left:${x}px;top:${y}px;width:${w}px;height:${h}px`;
+  win.innerHTML = `<div class="titlebar"><div class="close"></div><div class="title">${title}</div></div><div class="content"></div><div class="resize"></div>`;
+  desktop.appendChild(win);
+  build(win.querySelector('.content'), win);
+  focusWin(win);
+
+  win.addEventListener('mousedown', () => focusWin(win));
+  win.querySelector('.close').onclick = () => win.remove();
+  const tb = win.querySelector('.titlebar');
+  tb.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('close')) return;
+    const ox = e.clientX - win.offsetLeft, oy = e.clientY - win.offsetTop;
+    const mv = ev => { win.style.left = Math.max(0, ev.clientX-ox)+'px'; win.style.top = Math.max(0, ev.clientY-oy)+'px'; };
+    const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
+    document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+  });
+  win.querySelector('.resize').addEventListener('mousedown', e => {
+    e.stopPropagation(); e.preventDefault();
+    const sx=e.clientX, sy=e.clientY, sw=win.offsetWidth, sh=win.offsetHeight;
+    const mv = ev => { win.style.width=Math.max(200,sw+ev.clientX-sx)+'px'; win.style.height=Math.max(120,sh+ev.clientY-sy)+'px'; };
+    const up = () => { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); };
+    document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+  });
+  return win;
+}
+
+/* ---------- file system ---------- */
+const DEFAULT_FILES = [{name:'readme.txt', content:'Welcome to Lakshiv OS!'}];
+let fs = DEFAULT_FILES;
+try { fs = JSON.parse(localStorage.getItem('los-files') || 'null') || DEFAULT_FILES; } catch(e){}
+const saveFs = () => { try { localStorage.setItem('los-files', JSON.stringify(fs)); } catch(e){} };
+function promptBox(msg, def, cb){
+  const el = document.createElement('div'); el.className = 'alert';
+  el.innerHTML = '<div class="box"><div></div><input style="width:100%;margin-top:10px;padding:4px;font:inherit;border:2px solid #000"><button class="btn">OK</button><button class="btn" style="margin-right:8px">Cancel</button></div>';
+  el.querySelector('.box > div').textContent = msg;
+  const inp = el.querySelector('input'); inp.value = def;
+  const [ok, cancel] = el.querySelectorAll('button');
+  const done = v => { el.remove(); if (v !== null) cb(v); };
+  ok.onclick = () => done(inp.value); cancel.onclick = () => done(null);
+  inp.onkeydown = e => { if (e.key === 'Enter') done(inp.value); if (e.key === 'Escape') done(null); };
+  document.body.appendChild(el); inp.focus(); inp.select();
+}
+function newFile(){
+  promptBox('Name for the new file:', 'untitled.txt', raw => {
+    const name = raw.replace(/[<>"'\\]/g, '').trim();
+    if (!name) return;
+    if (fs.some(f => f.name === name)) return alertBox('A file with that name already exists.');
+    fs.push({name, content:''}); saveFs(); refreshFiles(); openFile(name);
+  });
+}
+function openFile(name){
+  const f = fs.find(x => x.name === name); if (!f) return;
+  makeWindow('file:'+name, name, 160+Math.random()*60, 80+Math.random()*60, 340, 260, c => {
+    const t = document.createElement('textarea'); t.className = 'notes'; t.value = f.content;
+    t.oninput = () => { f.content = t.value; saveFs(); };
+    c.appendChild(t);
+  });
+}
+function deleteFile(name){
+  fs = fs.filter(f => f.name !== name); trash.push(name); saveFs();
+  const w = document.querySelector('.win[data-id="file:'+name+'"]'); if (w) w.remove();
+  refreshFiles();
+}
+function refreshFiles(){
+  const list = document.getElementById('filelist'); if (!list) return;
+  list.innerHTML = '';
+  if (!fs.length) { list.textContent = 'No files yet. Click New File.'; return; }
+  fs.forEach(f => {
+    const row = document.createElement('div'); row.className = 'file';
+    const label = document.createElement('span'); label.textContent = '🗎  ' + f.name; label.style.flex = '1';
+    const del = document.createElement('button'); del.className = 'btn'; del.textContent = 'Delete'; del.style.cssText = 'padding:0 8px;color:#000';
+    del.onclick = e => { e.stopPropagation(); deleteFile(f.name); };
+    row.ondblclick = () => openFile(f.name);
+    row.append(label, del); list.appendChild(row);
+  });
+}
+
+/* ---------- web apps ---------- */
+const SITES = {
+  'Create': [
+    ['🎨','JS Paint','https://jspaint.app/'],
+    ['🖼️','Photopea','https://www.photopea.com/'],
+    ['✏️','Excalidraw','https://excalidraw.com/'],
+    ['📈','Desmos Graphing','https://www.desmos.com/calculator']
+  ],
+  'Learn & Reference': [
+    ['📚','Wikipedia','https://en.wikipedia.org/'],
+    ['🎲','Random Article','https://en.wikipedia.org/wiki/Special:Random'],
+    ['📖','Wiktionary','https://en.wiktionary.org/'],
+    ['📕','Wikibooks','https://en.wikibooks.org/'],
+    ['💬','Wikiquote','https://en.wikiquote.org/'],
+    ['🖼️','Wikimedia Commons','https://commons.wikimedia.org/'],
+    ['🏛️','Internet Archive','https://archive.org/']
+  ],
+  'Games': [
+    ['🔢','2048','https://gabrielecirulli.github.io/2048/'],
+    ['⬡','Hextris','https://hextris.github.io/hextris/'],
+    ['🐦','Clumsy Bird','https://ellisonleao.github.io/clumsy-bird/'],
+    ['👻','Pac-Man','https://platzh1rsch.github.io/pacman/']
+  ]
+};
+function openSite(name, url){
+  makeWindow('site:'+url, name, 60+Math.random()*80, 40+Math.random()*60, 620, 440, c => {
+    c.style.display='flex'; c.style.flexDirection='column'; c.style.overflow='hidden';
+    c.innerHTML = '<div class="toolbar"><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button class="btn" style="padding:2px 8px" title="Open in a real tab">↗ New tab</button></div><iframe style="flex:1;border:0;width:100%" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"></iframe>';
+    c.querySelector('span').textContent = url;
+    c.querySelector('iframe').src = url;
+    c.querySelector('button').onclick = () => window.open(url, '_blank', 'noopener');
+  });
+}
+let pins = [];
+try { pins = JSON.parse(localStorage.getItem('los-pins') || '[]'); } catch(e){}
+const savePins = () => { try { localStorage.setItem('los-pins', JSON.stringify(pins)); } catch(e){} };
+function addPinIcon(p){
+  if (document.getElementById('pin-'+p.url)) return;
+  const el = document.createElement('div'); el.className = 'icon'; el.id = 'pin-'+p.url;
+  const n = document.querySelectorAll('.icon[id^="pin-"]').length;
+  el.style.left = (10 + Math.floor(n/6)*90)+'px'; el.style.top = (10 + (n%6)*90)+'px';
+  el.innerHTML = '<div class="glyph"></div><span></span>';
+  el.querySelector('.glyph').textContent = p.icon; el.querySelector('span').textContent = p.name;
+  el.onclick = e => { document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel')); el.classList.add('sel'); e.stopPropagation(); };
+  el.ondblclick = () => openSite(p.name, p.url);
+  el.addEventListener('mousedown', e => {
+    const ox=e.clientX-el.offsetLeft, oy=e.clientY-el.offsetTop;
+    const mv=ev=>{ el.style.left=(ev.clientX-ox)+'px'; el.style.top=(ev.clientY-oy)+'px'; };
+    const up=()=>{ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
+    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+  });
+  desktop.appendChild(el);
+}
+function togglePin(icon, name, url){
+  const i = pins.findIndex(p => p.url === url);
+  if (i >= 0) { pins.splice(i,1); const el=document.getElementById('pin-'+url); if (el) el.remove(); }
+  else { const p={icon,name,url}; pins.push(p); addPinIcon(p); }
+  savePins();
+}
+
+/* ---------- apps ---------- */
+const apps = {
+  readme: { icon:'📄', name:'Read Me', open(){
+    makeWindow('readme','Read Me',90,60,380,300,c=>{
+      c.innerHTML = `<div class="pad"><b>Welcome to Lakshiv OS 1</b><br><br>
+      This is a test operating system running entirely in your browser.<br><br>
+      • Double-click icons to open apps<br>
+      • Drag windows by the title bar<br>
+      • Resize from the bottom-right corner<br>
+      • Click the square to close<br>
+      • Make files with File ▸ New File (or the Files app)<br>• Try the menus at the top, and type <code>help</code> in Terminal.</div>`; }); } },
+
+  notes: { icon:'📝', name:'Notes', open(){
+    makeWindow('notes','Notes',150,100,340,260,c=>{
+      const t = document.createElement('textarea'); t.className='notes'; t.placeholder='Type here…';
+      try { t.value = localStorage.getItem('los-notes') || ''; } catch(e){}
+      t.oninput = () => { try { localStorage.setItem('los-notes', t.value); } catch(e){} };
+      c.appendChild(t); }); } },
+
+  calc: { icon:'🧮', name:'Calculator', open(){
+    makeWindow('calc','Calculator',260,80,240,300,c=>{
+      c.innerHTML = '<div class="calc"><div class="disp">0</div><div class="keys"></div></div>';
+      const disp = c.querySelector('.disp'), keys = c.querySelector('.keys'); let expr='';
+      '7 8 9 / 4 5 6 * 1 2 3 - 0 . = +'.split(' ').concat(['C']).forEach(k=>{
+        const b=document.createElement('button'); b.textContent=k;
+        b.onclick=()=>{
+          if (k==='C') expr='';
+          else if (k==='=') { try { expr = String(Function('"use strict";return ('+(expr||'0')+')')()); } catch(e){ expr='Error'; } }
+          else { if (expr==='Error') expr=''; expr+=k; }
+          disp.textContent = expr||'0';
+        };
+        keys.appendChild(b);
+      }); }); } },
+
+  terminal: { icon:'💻', name:'Terminal', open(){
+    makeWindow('terminal','Terminal',200,120,420,280,c=>{
+      c.innerHTML = '<div class="term"><div class="out"></div><div>&gt; <input autofocus></div></div>';
+      const out=c.querySelector('.out'), inp=c.querySelector('input'), term=c.firstChild;
+      const say = s => { const d=document.createElement('div'); d.className='line'; d.textContent=s; out.appendChild(d); term.scrollTop=term.scrollHeight; };
+      say('Lakshiv OS terminal. Type "help".');
+      c.addEventListener('click', ()=>inp.focus());
+      inp.onkeydown = e => {
+        if (e.key!=='Enter') return;
+        const cmd = inp.value.trim(); inp.value=''; say('> '+cmd);
+        const [name, ...rest] = cmd.split(' ');
+        const arg = rest.join(' ');
+        const cmds = {
+          help:()=>'help, date, echo, ls, open <app>, clear, whoami, theme <color>',
+          date:()=>new Date().toString(),
+          echo:()=>arg,
+          whoami:()=>'guest@lakshiv-os',
+          ls:()=>Object.keys(apps).join('  '),
+          theme:()=>{ document.body.style.setProperty('--desk', arg||'#6b8cae'); return 'ok'; },
+          clear:()=>{ out.innerHTML=''; return ''; },
+          open:()=>{ if (apps[arg]) { apps[arg].open(); return 'opening '+arg; } return 'no such app: '+arg; }
+        };
+        if (!name) return;
+        say(cmds[name] ? cmds[name]() : 'command not found: '+name);
+      }; setTimeout(()=>inp.focus(),50); }); } },
+
+  paint: { icon:'🎨', name:'Paint', open(){
+    makeWindow('paint','Paint',120,70,420,360,c=>{
+      c.style.display='flex'; c.style.flexDirection='column';
+      c.innerHTML = '<div class="toolbar"></div><canvas class="paint"></canvas>';
+      const tb=c.querySelector('.toolbar'), cv=c.querySelector('canvas'), ctx=cv.getContext('2d');
+      let color='#000', size=3;
+      ['#000','#e11','#18c','#1a1','#fc0','#a3c','#fff'].forEach(col=>{
+        const s=document.createElement('div'); s.className='sw'; s.style.background=col; s.onclick=()=>color=col; tb.appendChild(s); });
+      const sz=document.createElement('input'); sz.type='range'; sz.min=1; sz.max=24; sz.value=3; sz.oninput=()=>size=+sz.value; tb.appendChild(sz);
+      const clr=document.createElement('button'); clr.className='btn'; clr.style.padding='2px 8px'; clr.textContent='Clear';
+      clr.onclick=()=>{ ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height); }; tb.appendChild(clr);
+      const fit=()=>{ cv.width=c.clientWidth; cv.height=c.clientHeight-tb.offsetHeight; ctx.fillStyle='#fff'; ctx.fillRect(0,0,cv.width,cv.height); };
+      setTimeout(fit,0);
+      let drawing=false;
+      const pos=e=>{ const r=cv.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; };
+      cv.onmousedown=e=>{ drawing=true; ctx.beginPath(); ctx.moveTo(...pos(e)); };
+      cv.onmousemove=e=>{ if(!drawing) return; ctx.strokeStyle=color; ctx.lineWidth=size; ctx.lineCap='round'; ctx.lineTo(...pos(e)); ctx.stroke(); };
+      window.addEventListener('mouseup',()=>drawing=false); }); } },
+
+  files: { icon:'🗂️', name:'Files', open(){
+    makeWindow('files','Files',110,90,340,280,c=>{
+      c.style.display='flex'; c.style.flexDirection='column';
+      c.innerHTML = '<div class="toolbar"><button class="btn" style="padding:2px 10px">New File</button></div><div id="filelist" style="flex:1;overflow:auto;padding:6px"></div>';
+      c.querySelector('button').onclick = newFile;
+      refreshFiles(); }); } },
+
+  browser: { icon:'🌐', name:'Browser', open(){
+    makeWindow('browser','Browser',70,45,580,420,c=>{
+      c.style.display='flex'; c.style.flexDirection='column'; c.style.overflow='hidden';
+      c.innerHTML = `<div class="toolbar">
+        <button class="btn bb" style="padding:2px 8px">◀</button><button class="btn bf" style="padding:2px 8px">▶</button>
+        <button class="btn br" style="padding:2px 8px">⟳</button><button class="btn bh" style="padding:2px 8px">⌂</button>
+        <input class="bu" placeholder="Search or enter address" style="flex:1;min-width:80px;border:2px solid #000;padding:3px;font:inherit">
+        <button class="btn bx" title="Open in a real browser tab" style="padding:2px 8px">↗</button></div>
+        <div style="flex:1;position:relative;background:#fff">
+          <div class="home pad" style="position:absolute;inset:0;overflow:auto"></div>
+          <iframe style="position:absolute;inset:0;width:100%;height:100%;border:0;display:none" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+        </div>`;
+      const $=q=>c.querySelector(q), fr=$('iframe'), home=$('.home'), url=$('.bu');
+      const sites=[['Wikipedia','https://en.wikipedia.org/'],['Wikipedia: Random','https://en.wikipedia.org/wiki/Special:Random'],['OpenStreetMap','https://www.openstreetmap.org/'],['Example.com','https://example.com/'],['Hacker News','https://news.ycombinator.com/']];
+      home.innerHTML = '<b>Lakshiv Browser</b><br><br>Type a web address or a search in the bar above (searches use Wikipedia).<br><br>' + sites.map(([n,u])=>'<div class="file" data-u="'+u+'">🌐  '+n+'</div>').join('') +
+        '<br><small>Note: many sites (Google, YouTube, GitHub…) block being shown inside other pages. If a page stays blank, use the ↗ button to open it in a real tab.</small>';
+      home.querySelectorAll('[data-u]').forEach(d=>d.onclick=()=>go(d.dataset.u));
+      let hist=[null], idx=0;
+      function show(){
+        const u=hist[idx];
+        if(u===null){ fr.style.display='none'; home.style.display='block'; url.value=''; fr.src='about:blank'; }
+        else { home.style.display='none'; fr.style.display='block'; fr.src=u; url.value=u; }
+      }
+      function go(raw){
+        raw=raw.trim(); if(!raw) return;
+        let u;
+        if(/^https?:\/\//i.test(raw)) u=raw;
+        else if(/^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(raw)) u='https://'+raw;
+        else u='https://en.wikipedia.org/wiki/Special:Search?search='+encodeURIComponent(raw);
+        hist=hist.slice(0,idx+1); hist.push(u); idx=hist.length-1; show();
+      }
+      url.onkeydown=e=>{ if(e.key==='Enter') go(url.value); };
+      $('.bb').onclick=()=>{ if(idx>0){ idx--; show(); } };
+      $('.bf').onclick=()=>{ if(idx<hist.length-1){ idx++; show(); } };
+      $('.br').onclick=()=>show();
+      $('.bh').onclick=()=>{ hist=hist.slice(0,idx+1); hist.push(null); idx=hist.length-1; show(); };
+      $('.bx').onclick=()=>{ if(hist[idx]) window.open(hist[idx],'_blank','noopener'); };
+    }); } },
+
+  store: { icon:'🏪', name:'App Store', open(){
+    makeWindow('store','App Store',90,50,460,420,c=>{
+      c.innerHTML = '<div class="pad"></div>';
+      const box = c.firstChild;
+      const draw = () => {
+        box.innerHTML = '<b>App Store</b><br><small>Double-click is not needed: click Open. Pin puts an app on your desktop. If an app stays blank, the site may have changed its rules; use ↗ New tab.</small><br>';
+        Object.entries(SITES).forEach(([cat, list]) => {
+          const h = document.createElement('div'); h.style.cssText='margin:10px 0 2px;font-weight:bold;border-bottom:2px solid #000'; h.textContent = cat; box.appendChild(h);
+          list.forEach(([ic, name, url]) => {
+            const row = document.createElement('div'); row.className='file';
+            const label = document.createElement('span'); label.style.flex='1'; label.textContent = ic+'  '+name;
+            const o = document.createElement('button'); o.className='btn'; o.textContent='Open'; o.style.cssText='padding:0 8px';
+            o.onclick = () => openSite(name, url);
+            const p = document.createElement('button'); p.className='btn'; p.style.cssText='padding:0 8px';
+            p.textContent = pins.some(x=>x.url===url) ? 'Unpin' : 'Pin';
+            p.onclick = () => { togglePin(ic, name, url); draw(); };
+            row.append(label, o, p); box.appendChild(row);
+          });
+        });
+      };
+      draw(); }); } },
+
+  trash: { icon:'🗑️', name:'Trash', open(){
+    makeWindow('trash','Trash',180,140,260,200,c=>{
+      c.innerHTML='<div class="pad">'+(trash.length? trash.map(t=>'🗎 '+t).join('<br>') : 'Trash is empty.')+'</div>'; }); } }
+};
+function open(id){ apps[id].open(); }
+
+/* ---------- desktop icons ---------- */
+const order = ['readme','files','notes','calc','terminal','browser','store','paint','trash'];
+function layoutIcons(){
+  const h = Math.max(300, window.innerHeight-24); const per = Math.max(1, Math.floor((h-20)/90));
+  order.forEach((id,i)=>{ const el=document.getElementById('icon-'+id); el.style.left=(window.innerWidth-100-Math.floor(i/per)*90)+'px'; el.style.top=(10+(i%per)*90)+'px'; });
+}
+order.forEach(id=>{
+  const a=apps[id], el=document.createElement('div'); el.className='icon'; el.id='icon-'+id;
+  el.innerHTML=`<div class="glyph">${a.icon}</div><span>${a.name}</span>`;
+  el.onclick=e=>{ document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel')); el.classList.add('sel'); e.stopPropagation(); };
+  el.ondblclick=()=>a.open();
+  // drag icons
+  el.addEventListener('mousedown', e=>{
+    const ox=e.clientX-el.offsetLeft, oy=e.clientY-el.offsetTop;
+    const mv=ev=>{ el.style.left=(ev.clientX-ox)+'px'; el.style.top=(ev.clientY-oy)+'px'; };
+    const up=()=>{ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
+    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+  });
+  desktop.appendChild(el);
+});
+layoutIcons(); pins.forEach(addPinIcon); window.addEventListener('resize', layoutIcons);
+desktop.addEventListener('click', ()=>document.querySelectorAll('.icon').forEach(i=>i.classList.remove('sel')));
+</script>
+</body>
+</html>
