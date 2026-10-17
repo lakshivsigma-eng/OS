@@ -69,6 +69,118 @@
   .alert { position:fixed; inset:0; background:#0006; display:flex; align-items:center; justify-content:center; z-index:8000; }
   .alert .box { background:#fff; border:3px double #000; padding:18px; max-width:320px; box-shadow:5px 5px 0 #000; }
   .alert .btn { padding:4px 18px; margin-top:12px; float:right; }
+
+  /* ---- file explorer ---- */
+  .xp{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;color:#1a1a1a;font:13px "Segoe UI",system-ui,-apple-system,sans-serif;user-select:none;outline:0}
+  .xp button,.xp input{font:inherit;color:inherit}
+  .xp-nav{display:flex;gap:4px;align-items:center;padding:6px 8px;background:#f3f6fb}
+  .xp-nav .nb{width:30px;height:28px;border:0;background:transparent;border-radius:5px;cursor:pointer;font-size:16px}
+  .xp-nav .nb:hover:not(:disabled){background:#dde8f5}
+  .xp-nav .nb:disabled{opacity:.35;cursor:default}
+  .xp-addr{flex:1;min-width:0;display:flex;align-items:center;background:#fff;border:1px solid #d5dbe3;border-radius:5px;height:28px;padding:0 6px;overflow:hidden;white-space:nowrap}
+  .xp-addr span{padding:2px 5px;border-radius:4px;cursor:pointer}
+  .xp-addr span:hover{background:#e5f1fb}
+  .xp-addr i{font-style:normal;color:#777;padding:0 1px}
+  .xp-search{width:160px;height:28px;border:1px solid #d5dbe3;border-radius:5px;padding:0 8px;background:#fff}
+  .xp-bar{display:flex;align-items:center;gap:2px;padding:4px 8px;border-bottom:1px solid #e3e7ec;background:#fff;flex-wrap:wrap}
+  .xp-bar .tb{border:0;background:transparent;padding:5px 9px;border-radius:5px;cursor:pointer;white-space:nowrap}
+  .xp-bar .tb:hover:not(.dis){background:#e8f1fb}
+  .xp-bar .tb.dis{opacity:.35;cursor:default}
+  .xp-bar .sepv{width:1px;height:20px;background:#dcdfe4;margin:0 4px}
+  .xp-main{flex:1;min-height:0;display:flex}
+  .xp-side{width:170px;flex:none;overflow:auto;padding:8px 6px;border-right:1px solid #eceff3;background:#fafbfc}
+  .xp-side .si{display:flex;gap:8px;align-items:center;padding:5px 8px;border-radius:5px;cursor:pointer;white-space:nowrap}
+  .xp-side .si:hover{background:#eaf3fc}
+  .xp-side .si.cur{background:#dbe9f8}
+  .xp-side hr{border:0;border-top:1px solid #e3e6ea;margin:6px 4px}
+  .xp-list{flex:1;overflow:auto;position:relative;min-width:0}
+  .xp-row{display:grid;grid-template-columns:minmax(150px,1fr) 150px 120px 70px;align-items:center;padding:3px 8px;border:1px solid transparent;border-radius:4px;margin:0 6px}
+  .xp-row.head{position:sticky;top:0;background:#fff;color:#555;border-bottom:1px solid #e3e6ea;border-radius:0;margin:0;padding:5px 14px;z-index:1}
+  .xp-row.head div{cursor:pointer}
+  .xp-row:not(.head):hover{background:#eaf3fc}
+  .xp-row.sel{background:#cce8ff;border-color:#99d1ff}
+  .xp-row .nm{display:flex;gap:7px;align-items:center}
+  .xp-row div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:8px}
+  .xp-grp{color:#0b5cad;padding:10px 14px 3px}
+  .xp-icons{display:grid;grid-template-columns:repeat(auto-fill,96px);gap:6px;padding:10px}
+  .xp-tile{text-align:center;padding:8px 4px;border:1px solid transparent;border-radius:5px;word-break:break-word}
+  .xp-tile .g{font-size:36px}
+  .xp-tile:hover{background:#eaf3fc}
+  .xp-tile.sel{background:#cce8ff;border-color:#99d1ff}
+  .xp-prev{width:240px;flex:none;border-left:1px solid #eceff3;padding:12px;overflow:auto;color:#444;white-space:pre-wrap;word-break:break-word;user-select:text}
+  .xp-status{padding:4px 12px;border-top:1px solid #eceff3;color:#555;background:#fafbfc}
+  .xp-empty{color:#777;text-align:center;padding:40px 10px}
+  .pop{position:fixed;background:#fff;border:1px solid #c9ced6;border-radius:8px;box-shadow:0 6px 24px #0004;padding:4px;z-index:7000;min-width:180px;font:13px "Segoe UI",system-ui,sans-serif;color:#1a1a1a}
+  .pop div{padding:6px 12px;border-radius:5px;cursor:default;white-space:nowrap}
+  .pop div:hover:not(.dis){background:#e5f1fb}
+  .pop div.dis{opacity:.4}
+  .pop hr{border:0;border-top:1px solid #e3e6ea;margin:3px 2px}
+
+  /* ---- new file dialog + editor ---- */
+  .nf-back{position:fixed;inset:0;background:#0006;display:flex;align-items:center;justify-content:center;z-index:8000}
+  .nf{background:#fff;border-radius:10px;padding:18px 20px;width:min(440px,92vw);box-shadow:0 10px 40px #0006;font:13px "Segoe UI",system-ui,sans-serif;color:#1a1a1a}
+  .nf h3{font-size:16px;font-weight:600;margin-bottom:12px}
+  .nf label{display:block;margin:12px 0 4px;color:#555}
+  .nf-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .nf-types button{border:1px solid #d5dbe3;background:#fff;border-radius:8px;padding:8px 2px;cursor:pointer;font:inherit;color:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .nf-types button span{font-size:20px}
+  .nf-types button:hover{background:#eef5fc}
+  .nf-types button.on{background:#dbe9f8;border-color:#7ab4ea}
+  .nf-name{width:100%;height:32px;border:1px solid #b9c3cf;border-radius:6px;padding:0 10px;font:inherit;color:inherit;outline:0}
+  .nf-name:focus{border-color:#2b7fd4;box-shadow:0 0 0 2px #2b7fd433}
+  .nf-hint{margin-top:6px;color:#666;font-size:12px;min-height:16px}
+  .nf-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+  .nf-btns button{border-radius:6px;padding:6px 18px;font:inherit;cursor:pointer;border:1px solid #c5ccd6;background:#fff;color:#1a1a1a}
+  .nf-btns .nf-ok{background:#1f6fd0;border-color:#1f6fd0;color:#fff}
+  .ed{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;font:13px "Segoe UI",system-ui,sans-serif;color:#1a1a1a}
+  .ed-bar{display:flex;gap:2px;padding:4px 6px;border-bottom:1px solid #e3e7ec;background:#f7f9fc;flex-wrap:wrap;align-items:center}
+  .ed-bar button{border:0;background:transparent;padding:4px 9px;border-radius:5px;cursor:pointer;font:inherit;color:inherit;white-space:nowrap}
+  .ed-bar button:hover{background:#e5f1fb}
+  .ed-bar button.on{background:#d6e8fa}
+  .ed-ta{flex:1;border:0;outline:0;resize:none;padding:10px 12px;font:13px/1.5 "Cascadia Mono",Consolas,"Courier New",monospace;tab-size:2;background:#fff;color:#1a1a1a;white-space:pre;overflow:auto;user-select:text}
+  .ed-stat{display:flex;justify-content:space-between;padding:3px 10px;border-top:1px solid #eceff3;background:#fafbfc;color:#555;font-size:12px}
+  .ed-stat .sv{color:#2a7d3f}
+
+  /* ---- docs (word processor) ---- */
+  .dc{flex:1;min-height:0;display:flex;flex-direction:column;background:#f1f3f4;font:13px "Segoe UI",system-ui,sans-serif;color:#1a1a1a}
+  .dc-top{display:flex;gap:4px;align-items:center;padding:6px 10px;background:#fff;border-bottom:1px solid #e0e3e7;flex-wrap:wrap}
+  .dc-top button{border:0;background:transparent;padding:4px 9px;border-radius:5px;cursor:pointer;font:inherit;color:inherit}
+  .dc-top button:hover{background:#e5f1fb}
+  .dc-title{font:16px "Segoe UI",system-ui,sans-serif;border:1px solid transparent;border-radius:4px;padding:2px 6px;min-width:140px;width:220px;color:inherit;background:transparent;outline:0}
+  .dc-title:hover{border-color:#c5ccd6}
+  .dc-title:focus{border-color:#2b7fd4;background:#fff}
+  .dc-bar{display:flex;flex-wrap:wrap;gap:2px;align-items:center;padding:4px 8px;background:#edf2fa;border-bottom:1px solid #dde3ea}
+  .dc-bar button{border:0;background:transparent;min-width:28px;height:28px;padding:0 6px;border-radius:5px;cursor:pointer;font:inherit;color:inherit}
+  .dc-bar button:hover{background:#d9e6f6}
+  .dc-bar button.on{background:#c7dcf5}
+  .dc-bar select{height:28px;border:1px solid #cfd8e3;border-radius:5px;background:#fff;font:inherit;color:inherit;max-width:120px}
+  .dc-bar input[type=color]{width:28px;height:26px;border:1px solid #cfd8e3;border-radius:5px;padding:1px;background:#fff;cursor:pointer}
+  .dc-bar .sepv{width:1px;height:20px;background:#cfd8e3;margin:0 4px}
+  .dc-pages{flex:1;overflow:auto;padding:18px 10px;min-height:0}
+  .dc-page{background:#fff;width:100%;max-width:720px;min-height:920px;margin:0 auto;padding:56px 64px;box-shadow:0 1px 4px #0003;outline:0;font:15px/1.6 Arial,sans-serif;color:#000;user-select:text;overflow-wrap:break-word}
+  .dc-page h1{font-size:2em;margin:.6em 0 .3em;line-height:1.2}
+  .dc-page h2{font-size:1.5em;margin:.6em 0 .3em;line-height:1.25}
+  .dc-page h3{font-size:1.2em;margin:.6em 0 .3em}
+  .dc-page p{margin:0 0 .6em}
+  .dc-page blockquote{margin:.6em 0;padding-left:14px;border-left:4px solid #c5ccd6;color:#444}
+  .dc-page ul,.dc-page ol{margin:0 0 .6em 1.6em}
+  .dc-page table{border-collapse:collapse;width:100%;margin:.6em 0}
+  .dc-page td,.dc-page th{border:1px solid #888;padding:6px;min-width:40px;vertical-align:top}
+  .dc-page img{max-width:100%}
+  .dc-page a{color:#1a5fb4}
+  .dc-page hr{border:0;border-top:1px solid #999;margin:1em 0}
+  .dc-stat{display:flex;justify-content:space-between;padding:3px 12px;border-top:1px solid #dde3ea;background:#fff;color:#555;font-size:12px}
+  .dc-stat .sv{color:#2a7d3f}
+  .dh{padding:16px 18px;background:#f1f3f4;min-height:100%;font:13px "Segoe UI",system-ui,sans-serif;color:#1a1a1a}
+  .dh h4{font-size:14px;font-weight:600;margin:4px 0 10px}
+  .dh-tiles{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .dh-tile{width:112px;height:140px;background:#fff;border:1px solid #d5dbe3;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;text-align:center}
+  .dh-tile:hover{border-color:#2b7fd4;box-shadow:0 0 0 2px #2b7fd433}
+  .dh-tile span{font-size:34px}
+  .dh-row{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid #e0e3e7;border-radius:6px;padding:8px 12px;margin-bottom:6px;cursor:pointer}
+  .dh-row:hover{background:#eef5fc}
+  .dh-row .nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dh-row .dt{color:#666}
 </style>
 </head>
 <body>
@@ -84,6 +196,7 @@
     <div class="drop">
       <div data-act="about">About Lakshiv OS…</div><hr>
       <div data-open="readme">Read Me</div>
+      <div data-open="docs">Docs</div>
       <div data-open="notes">Notes</div>
       <div data-open="calc">Calculator</div>
       <div data-open="terminal">Terminal</div>
@@ -114,7 +227,7 @@
   <div class="menu">Special
     <div class="drop">
       <div data-open="paint">Paint</div>
-      <div data-act="empty">Empty Trash</div>
+      <div data-act="empty">Empty Recycle Bin</div>
     </div>
   </div>
   <div class="menu">Help
@@ -127,7 +240,7 @@
 
 <script>
 const desktop = document.getElementById('desktop');
-let z = 10, trash = ['old_homework.txt','todo.bak'];
+let z = 10;
 
 /* ---------- boot / clock / menus ---------- */
 document.getElementById('boot').onclick = e => { e.currentTarget.remove(); open('readme'); };
@@ -156,7 +269,7 @@ function act(a){
   if (a === 'closeAll') document.querySelectorAll('.win').forEach(w=>w.remove());
   if (a === 'restart') location.reload();
   if (a === 'tidy') layoutIcons();
-  if (a === 'empty') { trash = []; alertBox('Trash emptied.'); }
+  if (a === 'empty') return emptyTrash();
   if (a.startsWith('bg:')) document.body.style.setProperty('--desk', a.slice(3));
 }
 function alertBox(msg){
@@ -201,10 +314,107 @@ function makeWindow(id, title, x, y, w, h, build){
 }
 
 /* ---------- file system ---------- */
-const DEFAULT_FILES = [{name:'readme.txt', content:'Welcome to Lakshiv OS!'}];
-let fs = DEFAULT_FILES;
-try { fs = JSON.parse(localStorage.getItem('los-files') || 'null') || DEFAULT_FILES; } catch(e){}
-const saveFs = () => { try { localStorage.setItem('los-files', JSON.stringify(fs)); } catch(e){} };
+const uid = () => Math.random().toString(36).slice(2,9);
+const nowTs = () => Date.now();
+function seedFS(){
+  const t = nowTs();
+  const mk = (name, parent, type, content) => ({id:uid(), name, type:type||'folder', parent, content:content||'', created:t, modified:t});
+  const desk=mk('Desktop','root'), docs=mk('Documents','root'), dl=mk('Downloads','root'), pics=mk('Pictures','root'), vids=mk('Videos','root'), mus=mk('Music','root');
+  return [desk,docs,dl,pics,vids,mus,
+    mk('readme.txt', docs.id, 'file', 'Welcome to Lakshiv OS!\n\nThis File Explorer really works:\n- New folders and files\n- Cut, copy, paste, rename, delete\n- Recycle Bin with restore\n- Search, sort and preview\n\nTip: right-click anywhere.')];
+}
+let FS = null;
+try { FS = JSON.parse(localStorage.getItem('los-fs2') || 'null'); } catch(e){}
+if (!Array.isArray(FS) || !FS.length) FS = seedFS();
+const saveFs = () => { try { localStorage.setItem('los-fs2', JSON.stringify(FS)); } catch(e){ if (!saveFs.warned) { saveFs.warned = true; alertBox('Browser storage is full, so your latest changes may not be saved. Try deleting large files or images.'); } } };
+const byId = id => FS.find(x => x.id === id);
+const kids = pid => FS.filter(x => x.parent === pid && !x.trashed);
+function descIds(id, incl, live){
+  const out = new Set(incl ? [id] : []);
+  const walk = p => FS.forEach(x => { if (x.parent === p && !out.has(x.id) && !(live && x.trashed)) { out.add(x.id); walk(x.id); } });
+  walk(id); return out;
+}
+function cleanName(raw){ return String(raw).replace(/[<>:"\/\\|?*]/g, '').trim(); }
+function uniqueName(pid, name, ign){
+  const names = new Set(FS.filter(x => x.parent === pid && !x.trashed && x.id !== ign).map(x => x.name.toLowerCase()));
+  if (!names.has(name.toLowerCase())) return name;
+  const m = name.match(/^(.*?)(\.[^.]+)?$/), base = m[1], ext = m[2] || ''; let i = 2;
+  while (names.has((base+' ('+i+')'+ext).toLowerCase())) i++;
+  return base+' ('+i+')'+ext;
+}
+function createItem(pid, type, name, content){
+  const t = nowTs(), it = {id:uid(), name:uniqueName(pid, name), type, parent:pid, content:content||'', created:t, modified:t};
+  FS.push(it); saveFs(); return it;
+}
+const extOf = it => { const m = it.name.match(/\.([^.]+)$/); return m ? m[1].toLowerCase() : ''; };
+const TYPES = {ldoc:'Lakshiv Document', txt:'Text Document', md:'Markdown File', html:'HTML Document', htm:'HTML Document', css:'CSS File', js:'JavaScript File', json:'JSON File', csv:'CSV File'};
+function typeLabel(it){ if (it.type === 'folder') return 'File folder'; const e = extOf(it); return TYPES[e] || (e ? e.toUpperCase()+' File' : 'File'); }
+function sizeOf(it){ if (it.type === 'folder') return 0; try { return new Blob([it.content]).size; } catch(e){ return it.content.length; } }
+function sizeLabel(it){ return it.type === 'folder' ? '' : Math.max(1, Math.ceil(sizeOf(it)/1024)) + ' KB'; }
+function iconOf(it){
+  if (it.type === 'folder') return '📁';
+  const e = extOf(it);
+  if (e === 'ldoc') return '📘';
+  if (e === 'html' || e === 'htm') return '🌐';
+  if (['js','json','css'].includes(e)) return '📜';
+  if (e === 'csv') return '📊';
+  return '📄';
+}
+const dateLabel = ts => new Date(ts).toLocaleString('en-US', {month:'numeric', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit'}).replace(',', '');
+function groupOf(ts){
+  const sod = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((sod(new Date()) - sod(new Date(ts))) / 864e5);
+  if (diff <= 0) return 'Today'; if (diff === 1) return 'Yesterday';
+  if (diff < 7) return 'Earlier this week'; if (diff < 31) return 'Earlier this month'; return 'A long time ago';
+}
+function pathOf(id){ const out = []; let it = byId(id); while (it) { out.unshift(it); it = byId(it.parent); } return out; }
+
+function cloneTree(it, pid){
+  const t = nowTs(), ks = FS.filter(x => x.parent === it.id && !x.trashed);
+  const n = Object.assign({}, it, {id:uid(), parent:pid, name:uniqueName(pid, it.name), created:t, modified:t});
+  delete n.trashed; delete n.deletedAt;
+  FS.push(n); ks.forEach(k => cloneTree(k, n.id)); return n;
+}
+let clip = null;
+function pasteInto(pid){
+  if (!clip) return [];
+  const made = [];
+  for (const id of clip.ids) {
+    const it = byId(id); if (!it || it.trashed) continue;
+    if (it.type === 'folder' && (pid === it.id || descIds(it.id, true, true).has(pid))) { alertBox("You can't put a folder inside itself."); continue; }
+    if (clip.mode === 'cut') { if (it.parent !== pid) { it.parent = pid; it.name = uniqueName(pid, it.name, it.id); } made.push(it.id); }
+    else made.push(cloneTree(it, pid).id);
+  }
+  if (clip.mode === 'cut') clip = null;
+  saveFs(); return made;
+}
+function closeWinFor(id){
+  descIds(id, true).forEach(x => ['file:'+x, 'run:'+x].forEach(k => { const w = document.querySelector('.win[data-id="'+k+'"]'); if (w) w.remove(); }));
+}
+function trashItems(ids){ ids.forEach(id => { const it = byId(id); if (it) { it.trashed = true; it.deletedAt = nowTs(); closeWinFor(id); } }); saveFs(); }
+function restoreItems(ids){
+  ids.forEach(id => {
+    const it = byId(id); if (!it) return;
+    it.trashed = false; delete it.deletedAt;
+    if (it.parent !== 'root') { const p = byId(it.parent); if (!p || p.trashed) it.parent = 'root'; }
+    it.name = uniqueName(it.parent, it.name, it.id);
+  });
+  saveFs();
+}
+function purgeItems(ids){
+  const rm = new Set(); ids.forEach(id => descIds(id, true).forEach(x => rm.add(x)));
+  rm.forEach(closeWinFor);
+  FS = FS.filter(x => !rm.has(x.id)); saveFs();
+}
+let explorerRefresh = null, explorerGo = null, explorerCwd = null;
+function refreshExplorer(){ if (explorerRefresh && document.querySelector('.win[data-id="files"]')) explorerRefresh(); refreshDocsHome(); }
+function emptyTrash(){
+  const ids = FS.filter(x => x.trashed).map(x => x.id);
+  if (!ids.length) return alertBox('The Recycle Bin is already empty.');
+  confirmBox('Permanently delete all ' + ids.length + ' item(s) in the Recycle Bin?', () => { purgeItems(ids); refreshExplorer(); });
+}
+
+/* dialogs and popup menus */
 function promptBox(msg, def, cb){
   const el = document.createElement('div'); el.className = 'alert';
   el.innerHTML = '<div class="box"><div></div><input style="width:100%;margin-top:10px;padding:4px;font:inherit;border:2px solid #000"><button class="btn">OK</button><button class="btn" style="margin-right:8px">Cancel</button></div>';
@@ -216,39 +426,573 @@ function promptBox(msg, def, cb){
   inp.onkeydown = e => { if (e.key === 'Enter') done(inp.value); if (e.key === 'Escape') done(null); };
   document.body.appendChild(el); inp.focus(); inp.select();
 }
+function confirmBox(msg, cb){
+  const el = document.createElement('div'); el.className = 'alert';
+  el.innerHTML = '<div class="box"><div></div><button class="btn">OK</button><button class="btn" style="margin-right:8px">Cancel</button></div>';
+  el.querySelector('.box > div').textContent = msg;
+  const [ok, cancel] = el.querySelectorAll('button');
+  ok.onclick = () => { el.remove(); cb(); }; cancel.onclick = () => el.remove();
+  document.body.appendChild(el);
+}
+function closePop(){ const p = document.getElementById('pop'); if (p) p.remove(); }
+function popup(x, y, items){
+  closePop();
+  const p = document.createElement('div'); p.className = 'pop'; p.id = 'pop';
+  items.forEach(it => {
+    if (it === '-') { p.appendChild(document.createElement('hr')); return; }
+    const d = document.createElement('div'); d.textContent = it.label;
+    if (it.dis) d.className = 'dis'; else d.onclick = () => { closePop(); it.fn(); };
+    p.appendChild(d);
+  });
+  document.body.appendChild(p);
+  const r = p.getBoundingClientRect();
+  p.style.left = Math.max(0, Math.min(x, innerWidth - r.width - 4)) + 'px';
+  p.style.top = Math.max(0, Math.min(y, innerHeight - r.height - 4)) + 'px';
+}
+document.addEventListener('mousedown', e => { if (!e.target.closest('.pop')) closePop(); }, true);
+
+/* file editor */
+const HTML_STARTER = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>My page</title>\n  <style>\n    body { font-family: system-ui, sans-serif; margin: 2rem; }\n  </style>\n</head>\n<body>\n  <h1>Hello from Lakshiv OS!</h1>\n  <p>Edit me, then press Run.</p>\n</body>\n</html>\n';
+const FILE_TYPES = [
+  ['txt','📄','Text','.txt',''],
+  ['ldoc','📘','Document','.ldoc','<p><br></p>'],
+  ['md','📝','Markdown','.md','# Title\n\nStart writing here...\n'],
+  ['html','🌐','HTML page','.html',HTML_STARTER],
+  ['css','🎨','CSS','.css','body {\n  font-family: system-ui, sans-serif;\n  margin: 2rem;\n}\n'],
+  ['js','📜','JavaScript','.js',"console.log('Hello from Lakshiv OS!');\n"],
+  ['json','🧾','JSON','.json','{\n  "name": "example",\n  "version": 1\n}\n'],
+  ['csv','📊','CSV table','.csv','name,score\nAlice,10\nBob,8\n']
+];
+const KNOWN_EXT = /\.(txt|ldoc|md|html?|css|js|json|csv)$/i;
+function newFileDialog(pid, kind, cb){
+  let type = FILE_TYPES.find(t => t[0] === kind) || FILE_TYPES[0];
+  const el = document.createElement('div'); el.className = 'nf-back';
+  el.innerHTML = '<div class="nf"><h3>Create new file</h3><div class="nf-types"></div><label>File name</label><input class="nf-name" spellcheck="false" autocomplete="off"><div class="nf-hint"></div><div class="nf-btns"><button class="nf-cancel">Cancel</button><button class="nf-ok">Create</button></div></div>';
+  const types = el.querySelector('.nf-types'), inp = el.querySelector('.nf-name'), hint = el.querySelector('.nf-hint');
+  const where = pid === 'root' ? 'This PC' : pathOf(pid).map(x => x.name).join(' › ');
+  const fullName = () => { let n = cleanName(inp.value); if (n && !/\.[^.]+$/.test(n)) n += type[3]; return n; };
+  const updateHint = () => {
+    const n = fullName();
+    const final = n ? uniqueName(pid, n) : '';
+    hint.textContent = !n ? 'Enter a file name.' : (final !== n ? 'That name is taken, so it will be saved as "' + final + '" in ' + where + '.' : 'Will be created in ' + where + '.');
+  };
+  const chips = FILE_TYPES.map(t => {
+    const b = document.createElement('button'); b.innerHTML = '<span></span><div></div>';
+    b.children[0].textContent = t[1]; b.children[1].textContent = t[2];
+    b.onclick = () => {
+      const stem = inp.value.trim().replace(KNOWN_EXT, '') || 'untitled';
+      type = t; inp.value = stem + t[3]; mark(); updateHint(); inp.focus(); inp.setSelectionRange(0, stem.length);
+    };
+    types.appendChild(b); return b;
+  });
+  const mark = () => chips.forEach((b, i) => b.classList.toggle('on', FILE_TYPES[i] === type));
+  inp.value = (type[0] === 'html' ? 'index' : 'untitled') + type[3];
+  inp.oninput = updateHint;
+  const close = () => el.remove();
+  const create = () => {
+    const name = fullName();
+    if (!name) { inp.focus(); return; }
+    const m = name.match(/\.([^.]+)$/), ext = m ? m[1].toLowerCase() : '';
+    const tpl = FILE_TYPES.find(t => t[0] === ext || (ext === 'htm' && t[0] === 'html'));
+    const it = createItem(pid, 'file', name, tpl ? tpl[4] : '');
+    close(); cb(it);
+  };
+  el.querySelector('.nf-ok').onclick = create;
+  el.querySelector('.nf-cancel').onclick = close;
+  el.addEventListener('mousedown', e => { if (e.target === el) close(); });
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') create(); if (e.key === 'Escape') close(); });
+  document.body.appendChild(el); mark(); updateHint();
+  inp.focus(); inp.setSelectionRange(0, inp.value.length - type[3].length);
+}
+function openFile(id){
+  const it = byId(id); if (!it || it.type !== 'file') return;
+  if (/\.ldoc$/i.test(it.name)) return openDoc(id);
+  makeWindow('file:'+id, it.name, 130+Math.random()*80, 60+Math.random()*60, 540, 380, c => {
+    c.style.display = 'flex'; c.style.flexDirection = 'column'; c.style.overflow = 'hidden';
+    c.innerHTML = '<div class="ed"><div class="ed-bar"></div><textarea class="ed-ta" spellcheck="false"></textarea><div class="ed-stat"><span class="pos"></span><span class="sv">Saved ✓</span></div></div>';
+    const bar = c.querySelector('.ed-bar'), t = c.querySelector('.ed-ta'), pos = c.querySelector('.pos'), sv = c.querySelector('.sv');
+    let size = 13;
+    t.value = it.content; t.setSelectionRange(0, 0);
+    const btn = (label, fn, title) => { const b = document.createElement('button'); b.textContent = label; if (title) b.title = title; b.onclick = () => fn(b); bar.appendChild(b); return b; };
+    const info = () => {
+      const before = t.value.slice(0, t.selectionStart).split('\n');
+      pos.textContent = 'Ln ' + before.length + ', Col ' + (before[before.length-1].length + 1) + '   ·   ' + t.value.length + ' chars   ·   ' + t.value.split('\n').length + ' lines';
+    };
+    const save = () => { it.content = t.value; it.modified = nowTs(); saveFs(); sv.textContent = 'Saved ✓'; refreshExplorer(); };
+    t.addEventListener('input', () => { save(); info(); });
+    ['keyup', 'click', 'select'].forEach(ev => t.addEventListener(ev, info));
+    t.addEventListener('keydown', e => {
+      if (e.key === 'Tab') { e.preventDefault(); t.setRangeText('  ', t.selectionStart, t.selectionEnd, 'end'); t.dispatchEvent(new Event('input')); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); sv.textContent = 'Saved ✓ (Ctrl+S)'; }
+    });
+    btn('💾 Save', () => { save(); sv.textContent = 'Saved ✓'; }, 'Ctrl+S (changes also save automatically)');
+    btn('⤶ Wrap', b => { const on = t.style.whiteSpace !== 'pre-wrap'; t.style.whiteSpace = on ? 'pre-wrap' : 'pre'; b.classList.toggle('on', on); }, 'Toggle word wrap');
+    btn('A−', () => { size = Math.max(9, size - 1); t.style.fontSize = size + 'px'; }, 'Smaller text');
+    btn('A+', () => { size = Math.min(28, size + 1); t.style.fontSize = size + 'px'; }, 'Larger text');
+    btn('⬇ Download', () => {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([t.value], {type:'text/plain'})); a.download = it.name;
+      document.body.appendChild(a); a.click(); a.remove();
+    }, 'Save a copy to your computer');
+    if (/\.html?$/i.test(it.name)) btn('▶ Run', () => runHtml(it), 'Preview this page');
+    if (/\.js$/i.test(it.name)) btn('▶ Run', () => runJs(it), 'Run this script');
+    info();
+  });
+}
+function runWindow(it, doc){
+  const old = document.querySelector('.win[data-id="run:'+it.id+'"]'); if (old) old.remove();
+  makeWindow('run:'+it.id, '▶ '+it.name, 100, 60, 520, 380, c => {
+    c.style.display = 'flex'; c.style.overflow = 'hidden';
+    const f = document.createElement('iframe'); f.style.cssText = 'flex:1;border:0;width:100%;height:100%;background:#fff';
+    f.setAttribute('sandbox', 'allow-scripts allow-forms allow-popups'); f.srcdoc = doc; c.appendChild(f);
+  });
+}
+function runHtml(it){ runWindow(it, it.content); }
+function runJs(it){
+  const code = it.content.replace(/<\/script/gi, '<\\/script');
+  runWindow(it, '<body style="font:13px/1.5 Consolas,monospace;margin:10px"><pre id="o" style="white-space:pre-wrap"></pre><script>' +
+    "const o=document.getElementById('o');const w=(...a)=>{o.textContent+=a.map(x=>typeof x==='object'?JSON.stringify(x):String(x)).join(' ')+'\\n'};console.log=w;console.error=(...a)=>w('Error:',...a);window.onerror=m=>w('Error: '+m);" +
+    '<\/script><script>' + code + '<\/script></body>');
+}
 function newFile(){
-  promptBox('Name for the new file:', 'untitled.txt', raw => {
-    const name = raw.replace(/[<>"'\\]/g, '').trim();
-    if (!name) return;
-    if (fs.some(f => f.name === name)) return alertBox('A file with that name already exists.');
-    fs.push({name, content:''}); saveFs(); refreshFiles(); openFile(name);
+  let pid = 'root';
+  const w = document.querySelector('.win[data-id="files"]');
+  const cur = (w && explorerCwd) ? explorerCwd() : null;
+  if (cur && cur !== 'trash') pid = cur; else { const d = FS.find(x => x.parent === 'root' && x.name === 'Documents' && !x.trashed); if (d) pid = d.id; }
+  newFileDialog(pid, 'txt', it => { refreshExplorer(); openFile(it.id); });
+}
+
+/* ---------- docs (word processor) ---------- */
+const escapeHtml = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+function cleanHtml(html){
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  doc.querySelectorAll('script,style,iframe,object,embed,link,meta,base,form').forEach(n => n.remove());
+  doc.querySelectorAll('*').forEach(n => [...n.attributes].forEach(a => {
+    const nm = a.name.toLowerCase(), v = a.value.trim().toLowerCase();
+    if (nm.startsWith('on') || ((nm === 'href' || nm === 'src' || nm === 'xlink:href') && /^(javascript|vbscript|data:text)/.test(v))) n.removeAttribute(a.name);
+  }));
+  return doc.body.innerHTML;
+}
+function htmlToText(html){
+  const spaced = String(html).replace(/<\/(p|h[1-6]|li|div|tr|blockquote)>|<br\s*\/?>/gi, m => m + '\n');
+  return (new DOMParser().parseFromString(spaced, 'text/html').body.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+}
+function downloadText(name, mime, data){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([data], {type:mime})); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function printHtml(html){
+  const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  f.srcdoc = html; f.onload = () => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch(e){} setTimeout(() => f.remove(), 2000); };
+  document.body.appendChild(f);
+}
+const DOC_CSS = 'body{font-family:Arial,sans-serif;font-size:15px;line-height:1.6;max-width:720px;margin:40px auto;padding:0 16px;color:#000}table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;padding:6px}img{max-width:100%}blockquote{border-left:4px solid #c5ccd6;margin-left:0;padding-left:14px;color:#444}';
+const docPage = (title, body) => '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + escapeHtml(title) + '</title><style>' + DOC_CSS + '</style></head><body>' + cleanHtml(body) + '</body></html>';
+const wordDoc = (title, body) => '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>' + escapeHtml(title) + '</title><style>' + DOC_CSS + '</style></head><body>' + cleanHtml(body) + '</body></html>';
+const DOC_TEMPLATES = [
+  ['📄','Blank','<p><br></p>'],
+  ['✉️','Letter','<p>Your Name<br>Your Address<br>City, Province</p><p>Date</p><p>Dear Recipient,</p><p>Write your letter here.</p><p>Sincerely,<br>Your Name</p>'],
+  ['🧑‍💼','Resume','<h1>Your Name</h1><p>email@example.com · (555) 555-5555 · City</p><h2>Experience</h2><ul><li>Job title, Company — what you did</li></ul><h2>Education</h2><ul><li>School — program, year</li></ul><h2>Skills</h2><ul><li>Skill one</li><li>Skill two</li></ul>'],
+  ['🗒️','Meeting notes','<h1>Meeting notes</h1><p><b>Date:</b> <br><b>Attendees:</b> </p><h2>Agenda</h2><ul><li><br></li></ul><h2>Notes</h2><p><br></p><h2>Action items</h2><ul><li><br></li></ul>'],
+  ['📚','Essay','<h1>Essay title</h1><p>Introduction: state your main idea.</p><h2>Body</h2><p>Support your idea with evidence.</p><h2>Conclusion</h2><p>Wrap up your argument.</p>']
+];
+function documentsId(){ const d = FS.find(x => x.parent === 'root' && x.name === 'Documents' && !x.trashed); return d ? d.id : 'root'; }
+function createDoc(html, name){ const it = createItem(documentsId(), 'file', (name || 'Untitled document') + '.ldoc', html); refreshExplorer(); openDoc(it.id); return it; }
+
+let docsHomeDraw = null;
+function refreshDocsHome(){ if (docsHomeDraw && document.querySelector('.win[data-id="dochome"]')) docsHomeDraw(); }
+function openDocsHome(){
+  makeWindow('dochome', 'Docs', 70, 40, Math.min(660, innerWidth-40), Math.min(500, innerHeight-80), c => {
+    c.style.overflow = 'auto'; c.innerHTML = '<div class="dh"></div>';
+    const box = c.firstChild;
+    const draw = () => {
+      box.innerHTML = '<h4>Start a new document</h4><div class="dh-tiles"></div><h4>Recent documents</h4><div class="dh-list"></div>';
+      const tiles = box.querySelector('.dh-tiles'), list = box.querySelector('.dh-list');
+      DOC_TEMPLATES.forEach(([ic, name, html]) => {
+        const t = document.createElement('div'); t.className = 'dh-tile'; t.innerHTML = '<span></span><div></div>';
+        t.children[0].textContent = ic; t.children[1].textContent = name;
+        t.onclick = () => createDoc(html, name === 'Blank' ? 'Untitled document' : name);
+        tiles.appendChild(t);
+      });
+      const docs = FS.filter(x => x.type === 'file' && !x.trashed && /\.ldoc$/i.test(x.name)).sort((a, b) => b.modified - a.modified);
+      if (!docs.length) list.textContent = 'No documents yet. Pick a template above.';
+      docs.forEach(d => {
+        const r = document.createElement('div'); r.className = 'dh-row'; r.innerHTML = '<span>📘</span><div class="nm"></div><div class="dt"></div>';
+        r.children[1].textContent = d.name.replace(/\.ldoc$/i, ''); r.children[2].textContent = dateLabel(d.modified);
+        r.onclick = () => openDoc(d.id); list.appendChild(r);
+      });
+    };
+    docsHomeDraw = draw; draw();
   });
 }
-function openFile(name){
-  const f = fs.find(x => x.name === name); if (!f) return;
-  makeWindow('file:'+name, name, 160+Math.random()*60, 80+Math.random()*60, 340, 260, c => {
-    const t = document.createElement('textarea'); t.className = 'notes'; t.value = f.content;
-    t.oninput = () => { f.content = t.value; saveFs(); };
-    c.appendChild(t);
+
+function openDoc(id){
+  const it = byId(id); if (!it || it.type !== 'file') return;
+  makeWindow('file:'+id, it.name.replace(/\.ldoc$/i, ''), 70+Math.random()*60, 34+Math.random()*40, Math.min(860, innerWidth-40), Math.min(590, innerHeight-70), c => {
+    c.style.display = 'flex'; c.style.flexDirection = 'column'; c.style.overflow = 'hidden';
+    c.innerHTML = '<div class="dc"><div class="dc-top"><span>📘</span><input class="dc-title" spellcheck="false"><button data-m="file">File</button><button data-m="edit">Edit</button><button data-m="insert">Insert</button></div>' +
+      '<div class="dc-bar"></div><div class="dc-pages"><div class="dc-page" contenteditable="true"></div></div>' +
+      '<div class="dc-stat"><span class="wc"></span><span class="sv">Saved ✓</span></div></div>';
+    const $ = q => c.querySelector(q);
+    const page = $('.dc-page'), title = $('.dc-title'), bar = $('.dc-bar'), sv = $('.sv'), wc = $('.wc');
+    const winTitle = () => c.closest('.win').querySelector('.title');
+    title.value = it.name.replace(/\.ldoc$/i, '');
+    page.innerHTML = it.content ? cleanHtml(it.content) : '<p><br></p>';
+    let saved = null, timer = null;
+    const saveRange = () => { const s = getSelection(); if (s && s.rangeCount && page.contains(s.anchorNode)) saved = s.getRangeAt(0).cloneRange(); };
+    const restore = () => { const s = getSelection(); if (!s) return; s.removeAllRanges(); if (saved) s.addRange(saved); };
+    const count = () => { const t = page.textContent || ''; wc.textContent = (t.trim().match(/\S+/g) || []).length + ' words   ·   ' + t.length + ' characters'; };
+    const save = () => { clearTimeout(timer); timer = null; it.content = page.innerHTML; it.modified = nowTs(); saveFs(); sv.textContent = 'Saved ✓'; refreshExplorer(); };
+    const onInput = () => { sv.textContent = 'Saving…'; count(); clearTimeout(timer); timer = setTimeout(save, 250); };
+    const exec = (cmd, val) => { page.focus(); restore(); try { document.execCommand(cmd, false, val); } catch(e){} saveRange(); onInput(); syncState(); };
+    const state = {};
+    const syncState = () => { for (const k in state) { let on = false; try { on = document.queryCommandState(k); } catch(e){} state[k].classList.toggle('on', !!on); } };
+
+    /* toolbar */
+    const btn = (label, tip, fn, cmd) => { const b = document.createElement('button'); b.innerHTML = label; b.title = tip; b.onmousedown = e => e.preventDefault(); b.onclick = fn; bar.appendChild(b); if (cmd) state[cmd] = b; return b; };
+    const sepv = () => { const s = document.createElement('div'); s.className = 'sepv'; bar.appendChild(s); };
+    const sel = (tip, opts, fn) => { const s = document.createElement('select'); s.title = tip; opts.forEach(([v, l]) => s.appendChild(new Option(l, v))); s.onchange = () => { fn(s.value); s.selectedIndex = 0; }; bar.appendChild(s); return s; };
+    const color = (tip, label, val, fn) => { const w = document.createElement('span'); w.title = tip; w.textContent = label; w.style.cssText = 'display:inline-flex;align-items:center;gap:2px'; const i = document.createElement('input'); i.type = 'color'; i.value = val; i.onchange = () => fn(i.value); w.appendChild(i); bar.appendChild(w); };
+    btn('↶', 'Undo (Ctrl+Z)', () => exec('undo')); btn('↷', 'Redo (Ctrl+Y)', () => exec('redo'));
+    sepv();
+    sel('Paragraph style', [['', 'Style'], ['p', 'Normal text'], ['h1', 'Heading 1'], ['h2', 'Heading 2'], ['h3', 'Heading 3'], ['blockquote', 'Quote']], v => v && exec('formatBlock', '<' + v + '>'));
+    sel('Font', [['', 'Font'], ['Arial', 'Arial'], ['Times New Roman', 'Times New Roman'], ['Georgia', 'Georgia'], ['Verdana', 'Verdana'], ['Trebuchet MS', 'Trebuchet MS'], ['Courier New', 'Courier New'], ['Comic Sans MS', 'Comic Sans']], v => v && exec('fontName', v));
+    sel('Font size', [['', 'Size'], ...[10,11,12,14,16,18,20,24,28,32,36,48].map(n => [String(n), String(n)])], v => {
+      if (!v) return; exec('fontSize', '7');
+      page.querySelectorAll('font[size="7"], span').forEach(el => { const fs = el.style && el.style.fontSize; if (el.getAttribute('size') === '7' || fs === 'xxx-large' || fs === '-webkit-xxx-large') { el.removeAttribute('size'); el.style.fontSize = v + 'px'; } });
+      onInput();
+    });
+    sepv();
+    btn('<b>B</b>', 'Bold (Ctrl+B)', () => exec('bold'), 'bold'); btn('<i>I</i>', 'Italic (Ctrl+I)', () => exec('italic'), 'italic');
+    btn('<u>U</u>', 'Underline (Ctrl+U)', () => exec('underline'), 'underline'); btn('<s>S</s>', 'Strikethrough', () => exec('strikeThrough'), 'strikeThrough');
+    color('Text color', 'A', '#000000', v => exec('foreColor', v));
+    color('Highlight color', '🖍', '#ffff00', v => exec('hiliteColor', v));
+    sepv();
+    btn('⬅', 'Align left', () => exec('justifyLeft')); btn('↔', 'Center', () => exec('justifyCenter')); btn('➡', 'Align right', () => exec('justifyRight')); btn('☰', 'Justify', () => exec('justifyFull'));
+    sepv();
+    btn('• List', 'Bulleted list', () => exec('insertUnorderedList')); btn('1. List', 'Numbered list', () => exec('insertOrderedList'));
+    btn('⇤', 'Decrease indent', () => exec('outdent')); btn('⇥', 'Increase indent', () => exec('indent'));
+    sepv();
+    btn('🔗', 'Insert link', () => insertLink()); btn('Tx', 'Clear formatting', () => exec('removeFormat'));
+
+    /* inserts */
+    function insertLink(){
+      saveRange();
+      promptBox('Link address:', 'https://', v => {
+        let u = v.trim(); if (!u || u === 'https://') return;
+        if (!/^[a-z][a-z0-9+.-]*:/i.test(u)) u = 'https://' + u;
+        if (/^(javascript|data|vbscript):/i.test(u)) return alertBox('That kind of link is not allowed.');
+        if (saved && !saved.collapsed) exec('createLink', u); else exec('insertHTML', '<a href="' + escapeHtml(u) + '">' + escapeHtml(u) + '</a>');
+      });
+    }
+    function insertTable(){
+      saveRange();
+      promptBox('Rows × columns (for example 3x3):', '3x3', v => {
+        const m = v.match(/(\d+)\D+(\d+)/); if (!m) return alertBox('Enter something like 3x3.');
+        const r = Math.min(+m[1], 30), cc = Math.min(+m[2], 12); if (r < 1 || cc < 1) return;
+        let h = '<table><tbody>'; for (let i = 0; i < r; i++) h += '<tr>' + '<td><br></td>'.repeat(cc) + '</tr>'; h += '</tbody></table><p><br></p>';
+        exec('insertHTML', h);
+      });
+    }
+    function insertImageUrl(){
+      saveRange();
+      promptBox('Image address (https://…):', 'https://', v => { const u = v.trim(); if (/^https?:\/\//i.test(u) && u.length > 10) exec('insertImage', u); else if (u && u !== 'https://') alertBox('Enter an address starting with http:// or https://'); });
+    }
+    function insertImageFile(){
+      saveRange();
+      const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+      inp.onchange = () => {
+        const f = inp.files && inp.files[0]; if (!f) return;
+        const rd = new FileReader();
+        rd.onload = () => {
+          if (f.size < 200000) return exec('insertImage', rd.result);
+          const img = new Image();
+          img.onload = () => { const sc = Math.min(1, 900 / img.width), cv = document.createElement('canvas'); cv.width = Math.round(img.width * sc); cv.height = Math.round(img.height * sc); cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); exec('insertImage', cv.toDataURL('image/jpeg', 0.85)); };
+          img.src = rd.result;
+        };
+        rd.readAsDataURL(f);
+      };
+      inp.click();
+    }
+    function findReplace(){
+      saveRange();
+      promptBox('Find:', '', f => { if (!f) return; promptBox('Replace with:', '', r => {
+        let n = 0; const w = document.createTreeWalker(page, NodeFilter.SHOW_TEXT), nodes = []; while (w.nextNode()) nodes.push(w.currentNode);
+        nodes.forEach(t => { const parts = t.nodeValue.split(f); if (parts.length > 1) { n += parts.length - 1; t.nodeValue = parts.join(r); } });
+        onInput(); alertBox(n + ' replaced.');
+      }); });
+    }
+
+    /* menus */
+    const menu = (b, items) => { const r = b.getBoundingClientRect(); popup(r.left, r.bottom + 2, items); };
+    const base = () => (cleanName(title.value) || 'Untitled document');
+    const fileItems = () => [
+      {label:'New document', fn:() => createDoc('<p><br></p>')},
+      {label:'Open…', fn:() => openDocsHome()}, '-',
+      {label:'Make a copy', fn:() => { save(); const n = createItem(it.parent, 'file', base() + ' (copy).ldoc', it.content); refreshExplorer(); openDoc(n.id); }},
+      {label:'Rename', fn:() => { title.focus(); title.select(); }}, '-',
+      {label:'Download as Web page (.html)', fn:() => downloadText(base() + '.html', 'text/html', docPage(base(), page.innerHTML))},
+      {label:'Download as Word (.doc)', fn:() => downloadText(base() + '.doc', 'application/msword', wordDoc(base(), page.innerHTML))},
+      {label:'Download as Plain text (.txt)', fn:() => downloadText(base() + '.txt', 'text/plain', htmlToText(page.innerHTML))},
+      {label:'Print / Save as PDF', fn:() => printHtml(docPage(base(), page.innerHTML))}, '-',
+      {label:'Move to Recycle Bin', fn:() => { trashItems([id]); refreshExplorer(); }}
+    ];
+    c.querySelectorAll('.dc-top [data-m]').forEach(b => {
+      b.onmousedown = e => e.preventDefault();
+      b.onclick = () => {
+        saveRange();
+        if (b.dataset.m === 'file') menu(b, fileItems());
+        if (b.dataset.m === 'edit') menu(b, [{label:'Undo', fn:() => exec('undo')}, {label:'Redo', fn:() => exec('redo')}, '-', {label:'Select all', fn:() => exec('selectAll')}, {label:'Find and replace…', fn:findReplace}]);
+        if (b.dataset.m === 'insert') menu(b, [{label:'Table…', fn:insertTable}, {label:'Image from address…', fn:insertImageUrl}, {label:'Image from computer…', fn:insertImageFile}, {label:'Link…', fn:insertLink}, '-',
+          {label:'Horizontal line', fn:() => exec('insertHorizontalRule')}, {label:"Today's date", fn:() => exec('insertText', new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'}))}]);
+      };
+    });
+
+    /* title / page events */
+    const rename = () => {
+      const nm = cleanName(title.value) || 'Untitled document', full = nm + '.ldoc';
+      if (full === it.name) { title.value = nm; return; }
+      if (FS.some(x => x.parent === it.parent && !x.trashed && x.id !== it.id && x.name.toLowerCase() === full.toLowerCase())) { alertBox('A document with that name already exists here.'); title.value = it.name.replace(/\.ldoc$/i, ''); return; }
+      it.name = full; title.value = nm; saveFs(); winTitle().textContent = nm; refreshExplorer();
+    };
+    title.onchange = rename;
+    title.onkeydown = e => { if (e.key === 'Enter') { rename(); page.focus(); } };
+    page.addEventListener('input', onInput);
+    ['keyup', 'mouseup', 'focus'].forEach(ev => page.addEventListener(ev, () => { saveRange(); syncState(); }));
+    page.addEventListener('blur', () => { saveRange(); if (timer) save(); });
+    page.addEventListener('paste', e => {
+      e.preventDefault();
+      const cd = e.clipboardData; if (!cd) return;
+      const h = cd.getData('text/html'), t = cd.getData('text/plain');
+      exec('insertHTML', h ? cleanHtml(h) : escapeHtml(t).replace(/\n/g, '<br>'));
+    });
+    page.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); save(); sv.textContent = 'Saved ✓ (Ctrl+S)'; } });
+    page.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a'); if (a && (e.ctrlKey || e.metaKey)) { e.preventDefault(); window.open(a.href, '_blank', 'noopener'); } });
+    try { document.execCommand('styleWithCSS', false, true); } catch(e){}
+    count();
   });
 }
-function deleteFile(name){
-  fs = fs.filter(f => f.name !== name); trash.push(name); saveFs();
-  const w = document.querySelector('.win[data-id="file:'+name+'"]'); if (w) w.remove();
-  refreshFiles();
+
+/* ---------- file explorer window ---------- */
+function openExplorer(loc){
+  apps.files.open();
+  if (loc && explorerGo) explorerGo(loc);
 }
-function refreshFiles(){
-  const list = document.getElementById('filelist'); if (!list) return;
-  list.innerHTML = '';
-  if (!fs.length) { list.textContent = 'No files yet. Click New File.'; return; }
-  fs.forEach(f => {
-    const row = document.createElement('div'); row.className = 'file';
-    const label = document.createElement('span'); label.textContent = '🗎  ' + f.name; label.style.flex = '1';
-    const del = document.createElement('button'); del.className = 'btn'; del.textContent = 'Delete'; del.style.cssText = 'padding:0 8px;color:#000';
-    del.onclick = e => { e.stopPropagation(); deleteFile(f.name); };
-    row.ondblclick = () => openFile(f.name);
-    row.append(label, del); list.appendChild(row);
+function buildExplorer(c){
+  c.style.display = 'flex'; c.style.flexDirection = 'column'; c.style.overflow = 'hidden';
+  c.innerHTML = '<div class="xp" tabindex="0">' +
+    '<div class="xp-nav"><button class="nb" data-k="back" title="Back">←</button><button class="nb" data-k="fwd" title="Forward">→</button><button class="nb" data-k="up" title="Up">↑</button><button class="nb" data-k="ref" title="Refresh">⟳</button><div class="xp-addr"></div><input class="xp-search" placeholder="Search"></div>' +
+    '<div class="xp-bar"></div>' +
+    '<div class="xp-main"><div class="xp-side"></div><div class="xp-list"></div><div class="xp-prev" style="display:none"></div></div>' +
+    '<div class="xp-status"></div></div>';
+  const $ = q => c.querySelector(q);
+  let cwd = 'root', hist = ['root'], hi = 0, sel = new Set(), sortKey = 'name', sortAsc = true, view = 'details', showPrev = false, q = '';
+
+  const selItems = () => [...sel].map(byId).filter(Boolean);
+  function items(){
+    let list;
+    if (cwd === 'trash') list = FS.filter(x => x.trashed);
+    else if (q) { const ids = descIds(cwd, false, true); list = FS.filter(x => ids.has(x.id) && x.name.toLowerCase().includes(q)); }
+    else list = kids(cwd);
+    return list.sort(cmp);
+  }
+  function cmp(a, b){
+    const fa = a.type === 'folder', fb = b.type === 'folder';
+    if (sortKey !== 'modified' && fa !== fb) return fa ? -1 : 1;
+    let r;
+    if (sortKey === 'modified') r = a.modified - b.modified;
+    else if (sortKey === 'size') r = sizeOf(a) - sizeOf(b);
+    else if (sortKey === 'type') r = typeLabel(a).localeCompare(typeLabel(b)) || a.name.localeCompare(b.name);
+    else r = a.name.localeCompare(b.name, undefined, {numeric:true, sensitivity:'base'});
+    return sortAsc ? r : -r;
+  }
+  function navigate(loc, push){
+    if (push === undefined) push = true;
+    if (loc !== 'root' && loc !== 'trash') { const f = byId(loc); if (!f || f.type !== 'folder' || f.trashed) loc = 'root'; }
+    cwd = loc;
+    if (push && hist[hi] !== loc) { hist = hist.slice(0, hi+1); hist.push(loc); hi = hist.length - 1; }
+    sel = new Set(); q = ''; $('.xp-search').value = '';
+    refresh();
+  }
+  function parentOf(){ if (cwd === 'root' || cwd === 'trash') return 'root'; const f = byId(cwd); return f ? f.parent : 'root'; }
+
+  /* actions */
+  function doNew(kind){
+    if (cwd === 'trash') return alertBox('Open a folder first.');
+    if (kind === 'folder') return promptBox('Folder name:', 'New folder', raw => {
+      const name = cleanName(raw); if (!name) return;
+      const it = createItem(cwd, 'folder', name, ''); sel = new Set([it.id]); refresh();
+    });
+    newFileDialog(cwd, kind, it => { sel = new Set([it.id]); refresh(); openFile(it.id); });
+  }
+  function setClip(mode){ if (!sel.size) return; clip = {mode, ids:[...sel]}; renderBar(); }
+  function doPaste(){ if (cwd === 'trash' || !clip) return; const made = pasteInto(cwd); sel = new Set(made); refresh(); }
+  function renameSel(){
+    const it = selItems()[0]; if (!it || sel.size !== 1 || cwd === 'trash') return;
+    promptBox('New name:', it.name, raw => {
+      const name = cleanName(raw); if (!name || name === it.name) return;
+      if (FS.some(x => x.parent === it.parent && !x.trashed && x.id !== it.id && x.name.toLowerCase() === name.toLowerCase())) return alertBox('That name is already used here.');
+      it.name = name; saveFs();
+      const t = document.querySelector('.win[data-id="file:'+it.id+'"] .title'); if (t) t.textContent = name;
+      refresh();
+    });
+  }
+  function deleteSel(){ if (!sel.size || cwd === 'trash') return; trashItems([...sel]); sel = new Set(); refresh(); }
+  function restoreSel(){ if (!sel.size) return; restoreItems([...sel]); sel = new Set(); refresh(); }
+  function deleteForever(){ if (!sel.size) return; const ids = [...sel]; confirmBox('Permanently delete ' + ids.length + ' item(s)? This cannot be undone.', () => { purgeItems(ids); sel = new Set(); refresh(); }); }
+  function openItem(it){
+    if (cwd === 'trash') return alertBox('Restore this item first to open it.');
+    if (it.type === 'folder') navigate(it.id); else openFile(it.id);
+  }
+
+  /* rendering */
+  function renderNav(){
+    $('[data-k=back]').disabled = hi <= 0;
+    $('[data-k=fwd]').disabled = hi >= hist.length - 1;
+    $('[data-k=up]').disabled = cwd === 'root';
+    const a = $('.xp-addr'); a.innerHTML = '';
+    const seg = (label, loc) => { const s = document.createElement('span'); s.textContent = label; s.onclick = () => navigate(loc); a.appendChild(s); };
+    const arrow = () => { const i = document.createElement('i'); i.textContent = '›'; a.appendChild(i); };
+    seg('💻 This PC', 'root');
+    if (cwd === 'trash') { arrow(); seg('Recycle Bin', 'trash'); }
+    else if (cwd !== 'root') pathOf(cwd).forEach(f => { arrow(); seg(f.name, f.id); });
+  }
+  function renderBar(){
+    const bar = $('.xp-bar'); bar.innerHTML = '';
+    const tb = (label, fn, dis) => { const b = document.createElement('button'); b.className = 'tb' + (dis ? ' dis' : ''); b.textContent = label; b.onclick = e => { if (!dis) fn(e); }; bar.appendChild(b); return b; };
+    const sepv = () => { const s = document.createElement('div'); s.className = 'sepv'; bar.appendChild(s); };
+    const has = sel.size > 0, one = sel.size === 1;
+    if (cwd === 'trash') {
+      tb('↩ Restore', restoreSel, !has); tb('✖ Delete forever', deleteForever, !has); tb('Empty Recycle Bin', emptyTrash, !FS.some(x => x.trashed));
+    } else {
+      tb('＋ New ▾', e => { const r = e.currentTarget.getBoundingClientRect(); popup(r.left, r.bottom + 2, [
+        {label:'📁  Folder', fn:() => doNew('folder')}, {label:'📘  Document', fn:() => doNew('ldoc')}, {label:'📄  Text document', fn:() => doNew('txt')},
+        {label:'🌐  HTML file', fn:() => doNew('html')}, {label:'📝  File… (choose type)', fn:() => doNew('file')}]); });
+      sepv();
+      tb('✂ Cut', () => setClip('cut'), !has); tb('⧉ Copy', () => setClip('copy'), !has);
+      tb('📋 Paste', doPaste, !clip); tb('✎ Rename', renameSel, !one); tb('🗑 Delete', deleteSel, !has);
+    }
+    sepv();
+    tb('⇅ Sort ▾', e => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const mk = (label, k) => ({label:(sortKey === k ? '●  ' : '    ') + label, fn:() => { sortKey = k; sortAsc = k !== 'modified'; refresh(); }});
+      popup(r.left, r.bottom + 2, [mk('Name','name'), mk('Date modified','modified'), mk('Type','type'), mk('Size','size'), '-',
+        {label:(sortAsc ? '●  ' : '    ') + 'Ascending', fn:() => { sortAsc = true; refresh(); }},
+        {label:(!sortAsc ? '●  ' : '    ') + 'Descending', fn:() => { sortAsc = false; refresh(); }}]);
+    });
+    tb('☰ View ▾', e => {
+      const r = e.currentTarget.getBoundingClientRect();
+      popup(r.left, r.bottom + 2, [
+        {label:(view === 'details' ? '●  ' : '    ') + 'Details', fn:() => { view = 'details'; refresh(); }},
+        {label:(view === 'icons' ? '●  ' : '    ') + 'Large icons', fn:() => { view = 'icons'; refresh(); }},
+        '-', {label:(showPrev ? '✓  ' : '    ') + 'Preview pane', fn:() => { showPrev = !showPrev; refresh(); }}]);
+    });
+    tb('Preview', () => { showPrev = !showPrev; refresh(); }).style.marginLeft = 'auto';
+  }
+  function renderSide(){
+    const side = $('.xp-side'); side.innerHTML = '';
+    const SI = {Desktop:'🖥️', Documents:'📄', Downloads:'⬇️', Pictures:'🖼️', Videos:'🎬', Music:'🎵'};
+    const row = (icon, label, loc) => { const d = document.createElement('div'); d.className = 'si' + (cwd === loc ? ' cur' : ''); d.textContent = icon + '  ' + label; d.onclick = () => navigate(loc); side.appendChild(d); };
+    row('🏠', 'Home', 'root');
+    side.appendChild(document.createElement('hr'));
+    kids('root').filter(f => f.type === 'folder').sort((a, b) => a.name.localeCompare(b.name)).forEach(f => row(SI[f.name] || '📁', f.name, f.id));
+    side.appendChild(document.createElement('hr'));
+    const n = FS.filter(x => x.trashed).length;
+    row('🗑️', 'Recycle Bin' + (n ? ' (' + n + ')' : ''), 'trash');
+  }
+  function bindItem(el, it){
+    el.dataset.id = it.id;
+    if (sel.has(it.id)) el.classList.add('sel');
+    el.onclick = e => { e.stopPropagation(); select(it.id, e.ctrlKey || e.metaKey); };
+    el.ondblclick = e => { e.stopPropagation(); openItem(it); };
+    el.oncontextmenu = e => { if (!sel.has(it.id)) select(it.id, false); ctx(e, true); };
+  }
+  function renderList(){
+    const L = $('.xp-list'); L.innerHTML = '';
+    const list = items();
+    if (view === 'details') {
+      const head = document.createElement('div'); head.className = 'xp-row head';
+      [['Name','name'], [cwd === 'trash' ? 'Date deleted' : 'Date modified','modified'], ['Type','type'], ['Size','size']].forEach(([label, k]) => {
+        const d = document.createElement('div'); d.textContent = label + (sortKey === k ? (sortAsc ? '  ▲' : '  ▼') : '');
+        d.onclick = () => { if (sortKey === k) sortAsc = !sortAsc; else { sortKey = k; sortAsc = k !== 'modified'; } refresh(); };
+        head.appendChild(d);
+      });
+      L.appendChild(head);
+      let lastG = null;
+      list.forEach(it => {
+        if (sortKey === 'modified') { const g = groupOf(it.modified); if (g !== lastG) { lastG = g; const h = document.createElement('div'); h.className = 'xp-grp'; h.textContent = '⌄ ' + g; L.appendChild(h); } }
+        const r = document.createElement('div'); r.className = 'xp-row';
+        r.innerHTML = '<div class="nm"><span></span><span></span></div><div></div><div></div><div></div>';
+        const nm = r.querySelectorAll('.nm span'); nm[0].textContent = iconOf(it); nm[1].textContent = it.name;
+        const cols = r.children; cols[1].textContent = dateLabel(it.modified); cols[2].textContent = typeLabel(it); cols[3].textContent = sizeLabel(it);
+        bindItem(r, it); L.appendChild(r);
+      });
+    } else {
+      const g = document.createElement('div'); g.className = 'xp-icons';
+      list.forEach(it => {
+        const t = document.createElement('div'); t.className = 'xp-tile'; t.innerHTML = '<div class="g"></div><div></div>';
+        t.children[0].textContent = iconOf(it); t.children[1].textContent = it.name;
+        bindItem(t, it); g.appendChild(t);
+      });
+      L.appendChild(g);
+    }
+    if (!list.length) { const e = document.createElement('div'); e.className = 'xp-empty'; e.textContent = q ? 'No items match your search.' : (cwd === 'trash' ? 'The Recycle Bin is empty.' : 'This folder is empty.'); L.appendChild(e); }
+    L.onclick = () => { if (sel.size) { sel = new Set(); updateSel(); } };
+    L.oncontextmenu = e => { sel = new Set(); updateSel(); ctx(e, false); };
+  }
+  function renderPrev(){
+    const p = $('.xp-prev'); p.style.display = showPrev ? 'block' : 'none';
+    if (!showPrev) return;
+    const its = selItems();
+    if (its.length !== 1) { p.textContent = its.length > 1 ? its.length + ' items selected.' : 'Select a file to preview.'; return; }
+    const it = its[0];
+    if (it.type === 'folder') p.textContent = '📁 ' + it.name + '\n\n' + kids(it.id).length + ' item(s)';
+    else { const body = extOf(it) === 'ldoc' ? htmlToText(it.content) : it.content; p.textContent = iconOf(it) + ' ' + it.name + '\n\n' + (body.length > 1500 ? body.slice(0, 1500) + '…' : (body || '(empty file)')); }
+  }
+  function renderStatus(){
+    const n = items().length;
+    $('.xp-status').textContent = n + ' item' + (n === 1 ? '' : 's') + (sel.size ? '   |   ' + sel.size + ' selected' : '');
+  }
+  function select(id, multi){
+    if (multi) { if (sel.has(id)) sel.delete(id); else sel.add(id); } else sel = new Set([id]);
+    updateSel();
+  }
+  function updateSel(){
+    c.querySelectorAll('.xp-list [data-id]').forEach(el => el.classList.toggle('sel', sel.has(el.dataset.id)));
+    renderBar(); renderPrev(); renderStatus();
+  }
+  function ctx(e, onItem){
+    e.preventDefault(); e.stopPropagation();
+    let m;
+    if (cwd === 'trash') m = onItem ? [{label:'Restore', fn:restoreSel}, {label:'Delete permanently', fn:deleteForever}] : [{label:'Empty Recycle Bin', fn:emptyTrash, dis:!FS.some(x => x.trashed)}];
+    else if (onItem) { const one = sel.size === 1; m = [{label:'Open', fn:() => openItem(selItems()[0]), dis:!one}, '-', {label:'Cut', fn:() => setClip('cut')}, {label:'Copy', fn:() => setClip('copy')}, '-', {label:'Rename', fn:renameSel, dis:!one}, {label:'Delete', fn:deleteSel}]; }
+    else m = [{label:'New folder', fn:() => doNew('folder')}, {label:'New text document', fn:() => doNew('txt')}, {label:'New HTML file', fn:() => doNew('html')}, '-', {label:'Paste', fn:doPaste, dis:!clip}, {label:'Refresh', fn:refresh}];
+    popup(e.clientX, e.clientY, m);
+  }
+  function refresh(){ renderNav(); renderBar(); renderSide(); renderList(); renderPrev(); renderStatus(); refreshDocsHome(); }
+
+  /* wiring */
+  $('[data-k=back]').onclick = () => { if (hi > 0) { hi--; navigate(hist[hi], false); } };
+  $('[data-k=fwd]').onclick = () => { if (hi < hist.length - 1) { hi++; navigate(hist[hi], false); } };
+  $('[data-k=up]').onclick = () => navigate(parentOf());
+  $('[data-k=ref]').onclick = () => refresh();
+  $('.xp-search').oninput = e => { q = e.target.value.trim().toLowerCase(); sel = new Set(); renderList(); renderBar(); renderPrev(); renderStatus(); };
+  const xp = $('.xp');
+  xp.addEventListener('mousedown', e => { if (e.target.tagName !== 'INPUT') xp.focus(); });
+  xp.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    const k = e.key.toLowerCase(), mod = e.ctrlKey || e.metaKey;
+    if (k === 'delete') { cwd === 'trash' ? deleteForever() : deleteSel(); }
+    else if (k === 'f2') renameSel();
+    else if (mod && k === 'c') setClip('copy');
+    else if (mod && k === 'x') setClip('cut');
+    else if (mod && k === 'v') doPaste();
+    else if (mod && k === 'a') { e.preventDefault(); sel = new Set(items().map(x => x.id)); updateSel(); }
+    else if (k === 'enter' && sel.size === 1) openItem(selItems()[0]);
+    else if (k === 'backspace') navigate(parentOf());
+    else if (k === 'escape') { sel = new Set(); updateSel(); }
   });
+  explorerRefresh = refresh; explorerGo = loc => navigate(loc); explorerCwd = () => cwd;
+  refresh();
 }
 
 /* ---------- web apps ---------- */
@@ -391,11 +1135,7 @@ const apps = {
       window.addEventListener('mouseup',()=>drawing=false); }); } },
 
   files: { icon:'🗂️', name:'Files', open(){
-    makeWindow('files','Files',110,90,340,280,c=>{
-      c.style.display='flex'; c.style.flexDirection='column';
-      c.innerHTML = '<div class="toolbar"><button class="btn" style="padding:2px 10px">New File</button></div><div id="filelist" style="flex:1;overflow:auto;padding:6px"></div>';
-      c.querySelector('button').onclick = newFile;
-      refreshFiles(); }); } },
+    makeWindow('files','Files',40,36,Math.min(880,innerWidth-60),Math.min(540,innerHeight-80),buildExplorer); } },
 
   browser: { icon:'🌐', name:'Browser', open(){
     makeWindow('browser','Browser',70,45,580,420,c=>{
@@ -458,14 +1198,14 @@ const apps = {
       };
       draw(); }); } },
 
-  trash: { icon:'🗑️', name:'Trash', open(){
-    makeWindow('trash','Trash',180,140,260,200,c=>{
-      c.innerHTML='<div class="pad">'+(trash.length? trash.map(t=>'🗎 '+t).join('<br>') : 'Trash is empty.')+'</div>'; }); } }
+  docs: { icon:'📘', name:'Docs', open(){ openDocsHome(); } },
+
+  trash: { icon:'🗑️', name:'Trash', open(){ openExplorer('trash'); } }
 };
 function open(id){ apps[id].open(); }
 
 /* ---------- desktop icons ---------- */
-const order = ['readme','files','notes','calc','terminal','browser','store','paint','trash'];
+const order = ['readme','files','docs','notes','calc','terminal','browser','store','paint','trash'];
 function layoutIcons(){
   const h = Math.max(300, window.innerHeight-24); const per = Math.max(1, Math.floor((h-20)/90));
   order.forEach((id,i)=>{ const el=document.getElementById('icon-'+id); el.style.left=(window.innerWidth-100-Math.floor(i/per)*90)+'px'; el.style.top=(10+(i%per)*90)+'px'; });
